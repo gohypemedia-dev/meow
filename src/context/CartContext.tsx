@@ -21,6 +21,7 @@ export interface CartItem {
   originalPrice?: number;
   image: string;
   quantity: number;
+  variantId?: string;
   isSubscription?: boolean;
   subscriptionInterval?: string; // e.g. "Every 4 Weeks"
 }

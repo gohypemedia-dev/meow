@@ -12,8 +12,39 @@ export default function ProductPage() {
   const { totalItems, openCart, addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [addedAnimation, setAddedAnimation] = useState(false);
+  const [productData, setProductData] = useState<{
+    price: number;
+    title: string;
+    description: string;
+    variantId?: string;
+  }>({
+    price: 19.99,
+    title: "CLEAN BEAN",
+    description:
+      "100% natural tofu cat litter made from food-grade soybean fiber. Fast clumping, 99.9% dust-free, and flushable.",
+  });
 
-  const price = 19.99;
+  React.useEffect(() => {
+    fetch("/api/catalog?slug=clean-bean")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.product) {
+          const p = data.product;
+          const firstSize = p.sizes?.[0];
+          setProductData({
+            price: firstSize?.price ?? p.basePrice ?? 19.99,
+            title: p.name?.toUpperCase() ?? "CLEAN BEAN",
+            description:
+              p.description ??
+              "100% natural tofu cat litter made from food-grade soybean fiber. Fast clumping, 99.9% dust-free, and flushable.",
+            variantId: firstSize?.variantId,
+          });
+        }
+      })
+      .catch((err) => console.warn("Using local product defaults:", err));
+  }, []);
+
+  const price = productData.price;
   const totalPrice = price * quantity;
 
   const handleAddToCart = () => {
@@ -36,6 +67,7 @@ export default function ProductPage() {
           volume: "6L / Single",
         },
         price: price,
+        variantId: productData.variantId,
         image: "/showcase/meow/IMG_7598.PNG",
         quantity: quantity,
       },
@@ -105,12 +137,12 @@ export default function ProductPage() {
           <div>
             {/* Product Title */}
             <h1 className="text-3xl sm:text-4xl md:text-[42px] font-heading font-black tracking-tight text-white mb-3 sm:mb-4 leading-tight drop-shadow-md">
-              CLEAN BEAN
+              {productData.title}
             </h1>
 
             {/* Product Description */}
             <p className="text-sm sm:text-base text-white/80 font-sans font-normal leading-relaxed mb-6">
-              100% natural tofu cat litter made from food-grade soybean fiber. Fast clumping, 99.9% dust-free, and flushable.
+              {productData.description}
             </p>
           </div>
 
@@ -167,6 +199,25 @@ export default function ProductPage() {
                   : `Add to Cart • $${totalPrice.toFixed(2)}`}
               </span>
             </button>
+
+            {/* Quick Links below dotted line & Add to Cart button */}
+            <div className="pt-2 sm:pt-3 border-t border-white/10 mt-2 sm:mt-3 flex flex-wrap items-center justify-between gap-x-2.5 gap-y-1 text-[10px] sm:text-[11px] font-sans text-white/50">
+              <Link href="/privacy-policy" className="hover:text-white transition-colors">
+                Privacy Policy
+              </Link>
+              <span className="text-white/30">•</span>
+              <Link href="/terms-and-conditions" className="hover:text-white transition-colors">
+                Terms & Conditions
+              </Link>
+              <span className="text-white/30">•</span>
+              <Link href="/return-and-refund-policy" className="hover:text-white transition-colors">
+                Return & Refund
+              </Link>
+              <span className="text-white/30">•</span>
+              <Link href="/contact-us" className="hover:text-white transition-colors">
+                Contact Us
+              </Link>
+            </div>
           </div>
         </motion.div>
 
@@ -193,8 +244,8 @@ export default function ProductPage() {
         </motion.div>
       </main>
 
-      {/* Layer 4: Footer Return Link */}
-      <footer className="relative z-40 max-w-7xl mx-auto w-full pb-4 sm:pb-6 px-4 sm:px-8 md:px-12 flex items-center justify-start text-xs text-white/50">
+      {/* Layer 4: Footer Return Link & Legal Links */}
+      <footer className="relative z-40 max-w-7xl mx-auto w-full pb-4 sm:pb-6 px-4 sm:px-8 md:px-12 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/50">
         <Link
           href="/"
           className="hover:text-white transition-colors flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-wider"
@@ -204,6 +255,16 @@ export default function ProductPage() {
           </svg>
           <span>Return Home</span>
         </Link>
+
+        <div className="flex flex-wrap items-center justify-center gap-4 text-[10px] sm:text-[11px]">
+          <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+          <span>•</span>
+          <Link href="/terms-and-conditions" className="hover:text-white transition-colors">Terms & Conditions</Link>
+          <span>•</span>
+          <Link href="/return-and-refund-policy" className="hover:text-white transition-colors">Return & Refund</Link>
+          <span>•</span>
+          <Link href="/contact-us" className="hover:text-white transition-colors">Contact Us</Link>
+        </div>
       </footer>
     </div>
   );

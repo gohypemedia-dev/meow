@@ -222,10 +222,11 @@ export default function Footer() {
         {/* Copyright & Legal Sub-Footer Bar */}
         <div className="pt-5 sm:pt-6 pb-2 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-bold text-white/50 text-center sm:text-left">
           <p>© {new Date().getFullYear()} MeowGanics Inc. All rights reserved.</p>
-          <div className="flex items-center gap-6 text-[11px] sm:text-xs">
-            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
-            <Link href="#" className="hover:text-white transition-colors">Shipping & Returns</Link>
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 sm:gap-6 text-[11px] sm:text-xs">
+            <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms-and-conditions" className="hover:text-white transition-colors">Terms & Conditions</Link>
+            <Link href="/return-and-refund-policy" className="hover:text-white transition-colors">Return & Refund Policy</Link>
+            <Link href="/contact-us" className="hover:text-white transition-colors">Contact Us</Link>
           </div>
         </div>
       </div>

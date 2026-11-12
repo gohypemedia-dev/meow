@@ -1188,7 +1188,7 @@ export default function HeroScrollExperience() {
               }}
               style={{
                 left: isMobile ? "50%" : "max(2.5rem, calc(50% - 580px))",
-                bottom: isMobile ? "calc(4.5rem + env(safe-area-inset-bottom, 0px))" : "auto",
+                bottom: isMobile ? "calc(1.25rem + env(safe-area-inset-bottom, 0px))" : "auto",
                 top: isMobile ? "auto" : "calc(50% + 52px)",
                 position: "absolute",
                 zIndex: 45,
@@ -1310,6 +1310,42 @@ export default function HeroScrollExperience() {
                     {addedAnimation ? "Added! 🐾" : "Add to Cart"}
                   </span>
                 </button>
+              </motion.div>
+
+              {/* Policy & Help Links below dotted line & Add to Cart */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: stage === "details" ? 1 : 0 }}
+                transition={{ duration: 0.5, delay: stage === "details" ? 1.05 : 0 }}
+                className="relative z-10 pt-2 sm:pt-2.5 mt-2 sm:mt-2.5 border-t border-white/10 flex flex-wrap items-center justify-center gap-x-2.5 sm:gap-x-3 gap-y-1 text-[9px] xs:text-[10px] sm:text-[11px] font-sans font-medium text-white/50"
+              >
+                <Link
+                  href="/privacy-policy"
+                  className="hover:text-white transition-colors"
+                >
+                  Privacy Policy
+                </Link>
+                <span className="text-white/30">•</span>
+                <Link
+                  href="/terms-and-conditions"
+                  className="hover:text-white transition-colors"
+                >
+                  Terms & Conditions
+                </Link>
+                <span className="text-white/30">•</span>
+                <Link
+                  href="/return-and-refund-policy"
+                  className="hover:text-white transition-colors"
+                >
+                  Return & Refund Policy
+                </Link>
+                <span className="text-white/30">•</span>
+                <Link
+                  href="/contact-us"
+                  className="hover:text-white transition-colors"
+                >
+                  Contact Us
+                </Link>
               </motion.div>
             </motion.div>
           </motion.div>
@@ -1456,105 +1492,95 @@ export default function HeroScrollExperience() {
       {/* ══════════════════════════════════════════════════════════════════════════════════════
           LAYER 7: BOTTOM CONTROLS & CONTINUOUS SCROLL STATUS BAR (Only shown when Docked Carousel)
           ══════════════════════════════════════════════════════════════════════════════════════ */}
-      <motion.div
-        style={{
-          opacity: bottomControlsOpacity,
-        }}
-        className="relative z-40 max-w-7xl mx-auto w-full px-4 sm:px-8 md:px-12 flex items-center justify-between text-xs text-white/50 pointer-events-auto shrink-0 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+0.25rem))] sm:pb-4 transition-all duration-300"
-      >
-        {/* Left Action / Stage indicator */}
-        <div className="flex items-center">
-          {stage === "details" ? (
-            <button
-              onClick={() => setStage("carousel")}
-              className="flex items-center gap-2 text-white/80 hover:text-white transition-colors cursor-pointer font-heading text-xs truncate max-w-[180px] sm:max-w-none"
-            >
-              <span className="w-2 h-2 rounded-full bg-[#A9D3F4] animate-pulse shrink-0" />
-              <span className="truncate">{currentItem.flavor}</span>
-              <span className="text-white/40 text-[10px] hidden sm:inline">• Tap to close</span>
-            </button>
-          ) : stage === "focus" ? (
-            <div className="flex items-center gap-2 text-white/80 font-heading text-xs">
-              <span className="w-2 h-2 rounded-full bg-[#A9D3F4] animate-pulse" />
-              <span>Focus • Scroll for Details</span>
-            </div>
-          ) : (
-            <button
-              onClick={() => {
-                if (isDocked && stage === "carousel") {
-                  setStage("details");
-                }
-              }}
-              className="flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 backdrop-blur-md text-white/90 text-[11px] sm:text-xs font-heading font-medium tracking-wide shadow-sm transition-all select-none cursor-pointer"
-            >
-              <span className="w-2 h-2 rounded-full bg-[#A9D3F4] animate-pulse shrink-0 shadow-[0_0_8px_#A9D3F4]" />
-              <span className="flex items-center gap-1.5">
-                <span>Swipe</span>
-                <span className="text-white/60 font-mono text-[10px]">⇄</span>
-                <span className="text-white/40">•</span>
-                <span>Scroll</span>
-                <span className="text-white/60 font-mono text-[10px]">↕</span>
-              </span>
-            </button>
-          )}
-        </div>
-
-        {/* Center/Right Navigation Dots & Step Counter */}
+      {stage !== "details" && (
         <motion.div
-          animate={{
-            opacity: isDocked ? 1 : 0,
-            pointerEvents: isDocked ? "auto" : "none",
+          style={{
+            opacity: bottomControlsOpacity,
           }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center gap-2.5 sm:gap-4"
+          className="relative z-40 max-w-7xl mx-auto w-full px-4 sm:px-8 md:px-12 flex items-center justify-between text-xs text-white/50 pointer-events-auto shrink-0 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+0.25rem))] sm:pb-4 transition-all duration-300"
         >
-
-          {/* Dots for the carousel slides */}
-          <div className="flex items-center gap-1.5 md:pl-3 md:border-l md:border-white/15">
-            {ORYZO_ITEMS.map((_, i) => {
-              const isSelected = stage === "carousel" ? activeIndex === i : i === ORYZO_ITEMS.length - 1;
-
-              return (
-                <button
-                  key={i}
-                  onClick={() => handleSelectIndex(i)}
-                  className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
-                    isSelected
-                      ? "w-5 sm:w-6 bg-white"
-                      : "w-1.5 bg-white/25 hover:bg-white/50"
-                  }`}
-                  aria-label={`Go to slide ${i + 1}`}
-                />
-              );
-            })}
+          {/* Left Action / Stage indicator */}
+          <div className="flex items-center">
+            {stage === "focus" ? (
+              <div className="flex items-center gap-2 text-white/80 font-heading text-xs">
+                <span className="w-2 h-2 rounded-full bg-[#A9D3F4] animate-pulse" />
+                <span>Focus • Scroll for Details</span>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  if (isDocked && stage === "carousel") {
+                    setStage("details");
+                  }
+                }}
+                className="flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 backdrop-blur-md text-white/90 text-[11px] sm:text-xs font-heading font-medium tracking-wide shadow-sm transition-all select-none cursor-pointer"
+              >
+                <span className="w-2 h-2 rounded-full bg-[#A9D3F4] animate-pulse shrink-0 shadow-[0_0_8px_#A9D3F4]" />
+                <span className="flex items-center gap-1.5">
+                  <span>Swipe</span>
+                  <span className="text-white/60 font-mono text-[10px]">⇄</span>
+                  <span className="text-white/40">•</span>
+                  <span>Scroll</span>
+                  <span className="text-white/60 font-mono text-[10px]">↕</span>
+                </span>
+              </button>
+            )}
           </div>
 
-          <span className="font-mono text-[10px] sm:text-[11px] text-white/40">
-            {stage === "details"
-              ? "Product Details"
-              : stage === "focus"
-              ? "Focus"
-              : `${activeIndex + 1} / ${TOTAL_SLIDES}`}
-          </span>
-        </motion.div>
+          {/* Center/Right Navigation Dots & Step Counter */}
+          <motion.div
+            animate={{
+              opacity: isDocked ? 1 : 0,
+              pointerEvents: isDocked ? "auto" : "none",
+            }}
+            transition={{ duration: 0.5 }}
+            className="flex items-center gap-2.5 sm:gap-4"
+          >
+            {/* Dots for the carousel slides */}
+            <div className="flex items-center gap-1.5 md:pl-3 md:border-l md:border-white/15">
+              {ORYZO_ITEMS.map((_, i) => {
+                const isSelected = stage === "carousel" ? activeIndex === i : i === ORYZO_ITEMS.length - 1;
 
-        {/* Back to top hill button */}
-        <button
-          onClick={() => {
-            setStage("carousel");
-            setActiveIndex(0);
-            virtualScroll.current = 0;
-            animate(scrollProgress, 0, { duration: 1.0, ease: [0.22, 1, 0.36, 1] });
-          }}
-          className="hover:text-white text-white/60 transition-colors cursor-pointer text-[10px] sm:text-[11px] flex items-center gap-1 font-heading font-bold uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2.5 sm:px-3.5 py-1.5 rounded-full border border-white/10 pointer-events-auto"
-        >
-          <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-current stroke-2 fill-none" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
-          </svg>
-          <span className="hidden sm:inline">Back to Hill</span>
-          <span className="sm:hidden">Top</span>
-        </button>
-      </motion.div>
+                return (
+                  <button
+                    key={i}
+                    onClick={() => handleSelectIndex(i)}
+                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                      isSelected
+                        ? "w-5 sm:w-6 bg-white"
+                        : "w-1.5 bg-white/25 hover:bg-white/50"
+                    }`}
+                    aria-label={`Go to slide ${i + 1}`}
+                  />
+                );
+              })}
+            </div>
+
+            <span className="font-mono text-[10px] sm:text-[11px] text-white/40">
+              {stage === "focus"
+                ? "Focus"
+                : `${activeIndex + 1} / ${TOTAL_SLIDES}`}
+            </span>
+          </motion.div>
+
+          {/* Back to top hill button */}
+          <button
+            onClick={() => {
+              setStage("carousel");
+              setActiveIndex(0);
+              virtualScroll.current = 0;
+              animate(scrollProgress, 0, { duration: 1.0, ease: [0.22, 1, 0.36, 1] });
+            }}
+            className="hover:text-white text-white/60 transition-colors cursor-pointer text-[10px] sm:text-[11px] flex items-center gap-1 font-heading font-bold uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2.5 sm:px-3.5 py-1.5 rounded-full border border-white/10 pointer-events-auto"
+          >
+            <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-current stroke-2 fill-none" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+            </svg>
+            <span className="hidden sm:inline">Back to Hill</span>
+            <span className="sm:hidden">Top</span>
+          </button>
+        </motion.div>
+      )}
 
     </div>
   );
