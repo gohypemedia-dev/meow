@@ -136,7 +136,7 @@ export default function CartDrawer() {
   );
 
   const rowClass = (active: boolean) =>
-    `relative rounded-[18px] px-4 py-3 cursor-pointer select-none border backdrop-blur-md transition-all duration-200 ${active
+    `relative rounded-[18px] px-4 py-2.5 sm:py-3 cursor-pointer select-none border backdrop-blur-md transition-all duration-200 ${active
       ? "bg-white/70 border-black/70 shadow-[0_6px_20px_rgba(0,0,0,0.12)]"
       : "bg-white/35 border-black/15 hover:bg-white/50"
     }`;
@@ -182,7 +182,7 @@ export default function CartDrawer() {
                 className="flex-1 overflow-y-auto overscroll-contain touch-pan-y flex flex-col"
               >
                 {/* 1. Full-bleed Hero Image */}
-                <div className="relative w-full shrink-0 aspect-[4/4.4] max-h-[52dvh] min-[460px]:max-h-none">
+                <div className="relative w-full flex-1 min-h-36 min-[460px]:flex-none min-[460px]:aspect-[4/4.4]">
                   <Image
                     src="/showcase/meow/IMG_7598.PNG"
                     alt="Clean Bean Tofu Cat Litter"
@@ -196,7 +196,7 @@ export default function CartDrawer() {
                   <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#d6d6d6] to-transparent" />
 
                   {/* Title block */}
-                  <div className="absolute left-5 right-5 bottom-12 sm:bottom-16">
+                  <div className="absolute left-5 right-5 bottom-10 sm:bottom-14">
                     <div className="inline-flex items-center gap-1 px-2.5 py-[3px] rounded-full bg-black/35 backdrop-blur-md border border-white/30 text-white text-[11px] font-semibold mb-2">
                       <span>🌱</span>
                       <span>100% Organic Tofu</span>
@@ -215,8 +215,8 @@ export default function CartDrawer() {
                 </div>
 
                 {/* 2. Silver Content Area */}
-                <div className="flex-1 -mt-px bg-gradient-to-b from-[#d6d6d6] via-[#cbcbcb] to-[#b4b4b4] px-4 min-[380px]:px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] sm:pb-6 flex flex-col">
-                  <p className="text-center text-[13px] font-medium text-black/75 -mt-3 sm:-mt-4 mb-4 relative z-10">
+                <div className="shrink-0 min-[460px]:flex-1 -mt-px bg-gradient-to-b from-[#d6d6d6] via-[#cbcbcb] to-[#b4b4b4] px-4 min-[380px]:px-5 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-6 flex flex-col">
+                  <p className="text-center text-[13px] font-semibold text-black/80 pt-2 mb-3 sm:mb-4 relative z-10">
                     Select your plan
                   </p>
 
@@ -265,7 +265,7 @@ export default function CartDrawer() {
                   </div>
 
                   {/* Yearly Plan */}
-                  <div onClick={() => handleSelectPlan("yearly")} className={`${rowClass(plan === "yearly")} mt-5`}>
+                  <div onClick={() => handleSelectPlan("yearly")} className={`${rowClass(plan === "yearly")} mt-4 sm:mt-5`}>
                     <div className="absolute -top-[11px] left-3 bg-black text-white text-[11px] font-bold px-2.5 py-[2px] rounded-full shadow-md">
                       Save 20%
                     </div>
@@ -284,11 +284,11 @@ export default function CartDrawer() {
                   </div>
 
                   {/* CTA */}
-                  <div className="mt-auto pt-6 sm:pt-7">
+                  <div className="mt-auto pt-4 sm:pt-7">
                     <button
                       onClick={handleCheckout}
                       disabled={isCheckingOut}
-                      className="block mx-auto w-full min-[380px]:w-[86%] py-3.5 rounded-full bg-black text-white font-semibold text-[15px] hover:bg-black/85 active:scale-[0.98] transition-all duration-150 shadow-[0_10px_25px_rgba(0,0,0,0.3)] cursor-pointer disabled:opacity-60"
+                      className="block mx-auto w-[78%] sm:w-[86%] py-2.5 sm:py-3.5 rounded-full bg-black text-white font-semibold text-[13px] sm:text-[15px] hover:bg-black/85 active:scale-[0.98] transition-all duration-150 shadow-[0_6px_16px_rgba(0,0,0,0.25)] sm:shadow-[0_10px_25px_rgba(0,0,0,0.3)] cursor-pointer disabled:opacity-60"
                     >
                       {isCheckingOut ? (
                         <span className="flex items-center justify-center gap-2">
@@ -302,7 +302,7 @@ export default function CartDrawer() {
                       )}
                     </button>
 
-                    <p className="text-center text-[12px] min-[380px]:text-[13px] text-black/70 mt-3">
+                    <p className="text-center text-[12px] min-[380px]:text-[13px] text-black/70 mt-2 sm:mt-3">
                       Cancel anytime • 30-Day Purr-fect Guarantee
                     </p>
 
