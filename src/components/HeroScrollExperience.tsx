@@ -1273,7 +1273,7 @@ export default function HeroScrollExperience() {
                     }}
                     className="text-xl sm:text-3xl md:text-[42px] font-heading font-black tracking-tight text-white mb-1 sm:mb-3 leading-tight drop-shadow-md"
                   >
-                    {currentItem.id === "clean-bean-original" ? "CLEAN BEAN" : currentItem.flavor.toUpperCase()}
+                    {currentItem.id === "clean-bean-original" ? cleanBean.name.toUpperCase() : currentItem.flavor.toUpperCase()}
                   </motion.h1>
 
                   <motion.p
@@ -1290,7 +1290,7 @@ export default function HeroScrollExperience() {
                     className="text-[10.5px] sm:text-xs md:text-base text-white/80 font-sans font-normal leading-snug mb-1.5 sm:mb-5 line-clamp-2 sm:line-clamp-none"
                   >
                     {currentItem.id === "clean-bean-original"
-                      ? "100% natural tofu cat litter made from food-grade soybean fiber. Fast clumping, 99.9% dust-free, and flushable."
+                      ? cleanBean.description
                       : "Official Meow Ganics vintage art poster. High quality archival print on heavy matte paper."}
                   </motion.p>
                 </div>

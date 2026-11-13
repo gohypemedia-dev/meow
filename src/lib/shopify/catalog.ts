@@ -299,11 +299,14 @@ export function buildCatalog(data: CatalogQueryResult): ShopifyCatalog {
   const enrichedProducts: EnrichedProduct[] = [];
 
   for (const shopifyProd of shopifyProducts) {
-    // Match against local products by handle or title
+    // Match against local products by handle first (stable even when the product is
+    // renamed in Shopify, e.g. "clean-bean-tofu-litter" → local "clean-bean"), then by title.
+    const handle = shopifyProd.handle.toLowerCase();
     const localMatch = PRODUCTS.find(
       (p) =>
-        p.slug.toLowerCase() === shopifyProd.handle.toLowerCase() ||
-        p.id.toLowerCase() === shopifyProd.handle.toLowerCase() ||
+        p.slug.toLowerCase() === handle ||
+        p.id.toLowerCase() === handle ||
+        handle.startsWith(`${p.slug.toLowerCase()}-`) ||
         shopifyProd.title.toLowerCase().includes(p.name.toLowerCase()) ||
         p.name.toLowerCase().includes(shopifyProd.title.toLowerCase())
     );
@@ -481,7 +484,8 @@ export const getProduct = cache(
       catalog.products.find(
         (p) =>
           p.slug.toLowerCase() === slugOrId.toLowerCase() ||
-          p.id.toLowerCase() === slugOrId.toLowerCase()
+          p.id.toLowerCase() === slugOrId.toLowerCase() ||
+          p.handle?.toLowerCase() === slugOrId.toLowerCase()
       ) ?? null
     );
   }

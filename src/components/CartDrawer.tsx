@@ -45,7 +45,7 @@ export default function CartDrawer() {
       addToCart(
         {
           productId: "clean-bean-original",
-          name: "Clean Bean Tofu Cat Litter",
+          name: cleanBean.name,
           size: { id: "standard", name: "7L Extra Free Pack", volume: "7L" },
           price: cleanBean.price,
           variantId: cleanBean.variantId,
@@ -65,7 +65,7 @@ export default function CartDrawer() {
       addToCart(
         {
           productId: "clean-bean-original",
-          name: "Clean Bean Tofu Litter (Yearly Plan)",
+          name: `${cleanBean.name} (Yearly Plan)`,
           size: { id: "standard", name: "7L Monthly Auto-Refill", volume: "7L x 12" },
           price: cleanBean.subscribePrice,
           variantId: cleanBean.variantId,
@@ -80,7 +80,7 @@ export default function CartDrawer() {
       addToCart(
         {
           productId: "clean-bean-original",
-          name: "Clean Bean Tofu Cat Litter",
+          name: cleanBean.name,
           size: { id: "standard", name: "7L Extra Free Pack", volume: "7L" },
           price: cleanBean.price,
           variantId: cleanBean.variantId,
@@ -101,8 +101,8 @@ export default function CartDrawer() {
           productId: "clean-bean-original",
           name:
             plan === "yearly"
-              ? "Clean Bean Tofu Litter (Yearly Plan)"
-              : "Clean Bean Tofu Cat Litter",
+              ? `${cleanBean.name} (Yearly Plan)`
+              : cleanBean.name,
           quantity: plan === "yearly" ? 1 : quantity,
           isSubscription: plan === "yearly",
           subscriptionInterval: plan === "yearly" ? "Monthly" : undefined,
@@ -192,7 +192,7 @@ export default function CartDrawer() {
                 <div className="relative w-full flex-1 min-h-36 min-[460px]:flex-none min-[460px]:aspect-[4/4.4]">
                   <Image
                     src="/showcase/meow/IMG_7598.PNG"
-                    alt="Clean Bean Tofu Cat Litter"
+                    alt={cleanBean.name}
                     fill
                     className="object-cover object-center"
                     priority
