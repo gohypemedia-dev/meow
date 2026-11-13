@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import InteractiveCat from "./InteractiveCat";
 import HeroBackground from "./HeroBackground";
+import HeroOfferBanner from "./HeroOfferBanner";
 import { useCart } from "@/context/CartContext";
 import CartIcon from "@/components/CartIcon";
 import ProfileMenu from "@/components/ProfileMenu";
@@ -41,10 +42,12 @@ export const ORYZO_ITEMS: OryzoItem[] = [
     title1: "DO YOU HAVE,",
     title2: "cat insurance?",
     flavor: "Cat Insurance Poster",
-    price: "$24.00",
-    priceNum: 24.0,
+    price: "Coming Soon",
+    priceNum: 0,
     image: "/showcase/meow/IMG_7614.PNG",
     accentColor: "#EF4444",
+    isComingSoon: true,
+    comingSoonDrop: "Coming Soon",
   },
 ];
 
@@ -121,13 +124,13 @@ export default function HeroScrollExperience() {
 
   // Responsive Carousel Card Dimensions (Taller mobile card height matching exact 974 x 1536 aspect ratio)
   const isTablet = viewport.width ? viewport.width >= 640 && viewport.width < 1024 : false;
-  const rawCardWidth = !isMobile ? 335 : isTablet ? 305 : (viewport.width ? Math.min(Math.round(viewport.width * 0.68), 260) : 255);
-  const cardWidth = !isMobile ? 335 : isTablet ? 305 : rawCardWidth;
+  const rawCardWidth = !isMobile ? 370 : isTablet ? 335 : (viewport.width ? Math.min(Math.round(viewport.width * 0.76), 300) : 295);
+  const cardWidth = !isMobile ? 370 : isTablet ? 335 : rawCardWidth;
   // Exact aspect ratio of IMG_7598.PNG is 1536 / 974 (~1.577). 
   // We match this exact ratio so the full length of the behind product image is shown from top handle to bottom rim.
   const mobileTargetHeight = Math.round(cardWidth * (1536 / 974));
-  const maxMobileCardHeight = viewport.height ? Math.max(Math.round(viewport.height - 265), 380) : 410;
-  const cardHeight = !isMobile ? 445 : isTablet ? 405 : Math.min(mobileTargetHeight, maxMobileCardHeight);
+  const maxMobileCardHeight = viewport.height ? Math.max(Math.round(viewport.height - 230), 400) : 475;
+  const cardHeight = !isMobile ? 490 : isTablet ? 450 : Math.min(mobileTargetHeight, maxMobileCardHeight);
   // Banner top spacing offset on mobile so it starts cleanly below the fixed icons (~168px)
   const mobileBannerYOffset = isMobile ? (viewport.height ? Math.max(Math.round(175 + cardHeight / 2 - viewport.height / 2), 24) : 48) : 0;
 
@@ -189,12 +192,16 @@ export default function HeroScrollExperience() {
   const boxCenterY = isMobile ? mobileBannerYOffset : 0;
   const dockedTargetX = isMobileView ? Math.round(8 * (cardWidth / 335)) : 8;
   const dockedTargetY = isMobile ? mobileBannerYOffset + Math.round(-26 * (cardHeight / 445)) : -26;
-  const dockedTargetScale = isMobileView ? 1.95 * (cardWidth / 260) : 1.48;
+  const dockedTargetScale = isMobileView ? 1.95 * (cardWidth / 260) : 1.48 * (cardWidth / 335);
 
   // Background Opacity Transforms
   const creamBgOpacity = useTransform(smoothProgress, [0, 0.32], [1, 0]);
   const darkBgOpacity = useTransform(smoothProgress, [0, 0.32], [0, 1]);
   const ambientOpacity = useTransform(smoothProgress, [0, 0.32, 0.65, 1], [0.05, 0, 0.12, 0.25]);
+
+  // Hero Limited Offer Banner Opacity & Float Exit
+  const heroBannerOpacity = useTransform(smoothProgress, [0, 0.22], [1, 0]);
+  const heroBannerY = useTransform(smoothProgress, [0, 0.22], [0, -32]);
 
   // Continuous Bag Position, Scale, Rotate, Opacity Transforms
   const bagX = useTransform(smoothProgress, (p) => {
@@ -242,14 +249,6 @@ export default function HeroScrollExperience() {
     return Math.max(0, 1 - (p - 0.88) / 0.12);
   });
 
-  // Dashed Box Opacity
-  const dashedBoxOpacity = useTransform(smoothProgress, (p) => {
-    if (stage !== "carousel") return 0;
-    if (p <= 0.38) return 0;
-    if (p <= 0.52) return (p - 0.38) / 0.14;
-    return 1;
-  });
-
   // Filmstrip Banner behind bag
   const bannerFilmstripOpacity = useTransform(smoothProgress, (p) => {
     if (stage !== "carousel") return 0;
@@ -289,24 +288,38 @@ export default function HeroScrollExperience() {
   const handleSlideNext = useCallback(() => {
     if (introPhase !== "docked") return;
     setSlideDir(1);
-    setActiveIndex((prev) => (prev < ORYZO_ITEMS.length - 1 ? prev + 1 : 0));
-  }, [introPhase]);
+    setActiveIndex((prev) => {
+      const nextIdx = prev < ORYZO_ITEMS.length - 1 ? prev + 1 : 0;
+      if (ORYZO_ITEMS[nextIdx]?.isComingSoon && stage === "details") {
+        setStage("carousel");
+      }
+      return nextIdx;
+    });
+  }, [introPhase, stage]);
 
   const handleSlidePrev = useCallback(() => {
     if (introPhase !== "docked") return;
     setSlideDir(-1);
-    setActiveIndex((prev) => (prev > 0 ? prev - 1 : ORYZO_ITEMS.length - 1));
-  }, [introPhase]);
+    setActiveIndex((prev) => {
+      const prevIdx = prev > 0 ? prev - 1 : ORYZO_ITEMS.length - 1;
+      if (ORYZO_ITEMS[prevIdx]?.isComingSoon && stage === "details") {
+        setStage("carousel");
+      }
+      return prevIdx;
+    });
+  }, [introPhase, stage]);
 
   const handleNext = useCallback(() => {
     if (isDocked && stage === "carousel") {
-      setStage("details");
+      if (!currentItem.isComingSoon) {
+        setStage("details");
+      }
     } else {
       const totalDist = Math.max((viewport.height || 850) * 1.60, 1150);
       virtualScroll.current = totalDist;
       animate(scrollProgress, 1, { duration: 0.95, ease: [0.22, 1, 0.36, 1] });
     }
-  }, [isDocked, stage, viewport.height, scrollProgress]);
+  }, [isDocked, stage, viewport.height, scrollProgress, currentItem.isComingSoon]);
 
   const handlePrev = useCallback(() => {
     if (stage === "details" || stage === "focus") {
@@ -372,6 +385,7 @@ export default function HeroScrollExperience() {
 
     // 3. When docked in carousel, scrolling down further opens details
     if (isDocked && stage === "carousel" && e.deltaY > 38) {
+      if (currentItem.isComingSoon) return;
       if (isWheelDebounced.current) return;
       isWheelDebounced.current = true;
       setStage("details");
@@ -444,13 +458,15 @@ export default function HeroScrollExperience() {
 
       // Vertical drag: dragging finger UP (scrolling DOWN) enters details!
       if (totalDiffY < -30) {
-        touchCooldownRef.current = true;
-        setStage("details");
-        setTimeout(() => {
-          touchCooldownRef.current = false;
-        }, 420);
-        touchStartRef.current = null;
-        lastTouchRef.current = null;
+        if (!currentItem.isComingSoon) {
+          touchCooldownRef.current = true;
+          setStage("details");
+          setTimeout(() => {
+            touchCooldownRef.current = false;
+          }, 420);
+          touchStartRef.current = null;
+          lastTouchRef.current = null;
+        }
         return;
       }
 
@@ -472,13 +488,15 @@ export default function HeroScrollExperience() {
 
     // If scroll reached docked threshold and finger is still scrolling down with momentum
     if (progress >= 0.98 && stepDeltaY > 16) {
-      touchCooldownRef.current = true;
-      setStage("details");
-      setTimeout(() => {
-        touchCooldownRef.current = false;
-      }, 420);
-      touchStartRef.current = null;
-      lastTouchRef.current = null;
+      if (!currentItem.isComingSoon) {
+        touchCooldownRef.current = true;
+        setStage("details");
+        setTimeout(() => {
+          touchCooldownRef.current = false;
+        }, 420);
+        touchStartRef.current = null;
+        lastTouchRef.current = null;
+      }
     }
   };
 
@@ -567,7 +585,9 @@ export default function HeroScrollExperience() {
         if (totalDiffY > 0) {
           // Swiped up -> scroll down
           if (isDocked && stage === "carousel") {
-            setStage("details");
+            if (!currentItem.isComingSoon) {
+              setStage("details");
+            }
           } else if (stage !== "details") {
             handleNext();
           }
@@ -830,6 +850,7 @@ export default function HeroScrollExperience() {
           {/* Shop Litter Button */}
           <button
             onClick={() => {
+              setActiveIndex(0);
               setIntroPhase("docked");
               setIsDocked(true);
               setStage("details");
@@ -884,6 +905,19 @@ export default function HeroScrollExperience() {
         </div>
       )}
 
+      {/* ── Hero Limited Offer Banner (Visible on Laptop and Mobile during Hero phase) ── */}
+      <motion.div
+        style={{
+          opacity: heroBannerOpacity,
+          y: heroBannerY,
+        }}
+        className={`absolute z-35 hero-offer-slot left-1/2 -translate-x-1/2 top-[210px] xs:top-[222px] sm:top-[230px] md:top-[17vh] w-full flex justify-center px-4 pointer-events-none ${
+          introPhase === "hero" ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+      >
+        <HeroOfferBanner />
+      </motion.div>
+
       {/* Layer 5: Hero Product Bag Synchronized into Banner Card (Oryzo.ai Reference Flow) */}
       <motion.div
         style={{
@@ -927,7 +961,7 @@ export default function HeroScrollExperience() {
               introPhase === "hero"
                 ? "md:animate-float cursor-pointer hover:scale-105 pointer-events-auto"
                 : ""
-            } drop-shadow-[0_20px_35px_rgba(0,0,0,0.35)] w-full h-full block relative z-10 transition-transform`}
+            } w-full h-full block relative z-10 transition-transform`}
           >
             <Image
               src="/product-bag.png"
@@ -1064,37 +1098,14 @@ export default function HeroScrollExperience() {
               overflow: "hidden",
             }}
             onClick={() => {
-              if (isDocked && stage === "carousel") {
+              if (isDocked && stage === "carousel" && !currentItem.isComingSoon) {
                 setStage("details");
               }
             }}
             className={`relative z-20 flex items-center justify-center origin-center shrink-0 pointer-events-auto ${
-              isDocked && stage === "carousel" ? "cursor-pointer" : ""
+              isDocked && stage === "carousel" && !currentItem.isComingSoon ? "cursor-pointer" : ""
             }`}
           >
-            {/* Dashed Border Box: Appears in Box stage, stays through Blur and Docked Carousel */}
-            <motion.div
-              style={{
-                opacity: dashedBoxOpacity,
-              }}
-              animate={{
-                scale: stage === "carousel" ? 1 : 0.92,
-              }}
-              transition={{
-                duration: 0.65,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              className="absolute inset-0 border-[1.5px] border-dashed border-white/50 pointer-events-none z-30 shadow-[0_20px_50px_rgba(0,0,0,0.5),0_0_25px_rgba(169,211,244,0.12)]"
-            >
-              {/* Corner Viewfinder L-Brackets (Oryzo aesthetic) */}
-              <div className="absolute -top-[1px] -left-[1px] w-3 h-3 border-t-2 border-l-2 border-white/90" />
-              <div className="absolute -top-[1px] -right-[1px] w-3 h-3 border-t-2 border-r-2 border-white/90" />
-              <div className="absolute -bottom-[1px] -left-[1px] w-3 h-3 border-b-2 border-l-2 border-white/90" />
-              <div className="absolute -bottom-[1px] -right-[1px] w-3 h-3 border-b-2 border-r-2 border-white/90" />
-              {/* Top Right Accent Dot from user reference images */}
-              <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 rounded-full bg-white/90 shadow-[0_0_6px_rgba(255,255,255,0.8)]" />
-            </motion.div>
-
             {/* Step 1: Carousel Filmstrip (Hidden in Spotlight & Box -> More Visible Banner in Blur -> Sharp in Docked) */}
             <motion.div
               className="absolute inset-0 pointer-events-none"
@@ -1140,6 +1151,12 @@ export default function HeroScrollExperience() {
                       priority={index === 0 || index === ORYZO_ITEMS.length - 1}
                       draggable={false}
                     />
+                    {prod.isComingSoon && (
+                      <div className="absolute top-3.5 left-3.5 sm:top-4 sm:left-4 z-20 px-3 py-1.5 rounded-full bg-black/65 backdrop-blur-md border border-white/20 text-white font-heading text-[10px] sm:text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 shadow-lg select-none">
+                        <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                        <span>Coming Soon</span>
+                      </div>
+                    )}
                   </div>
                 ))}
               </motion.div>
@@ -1172,48 +1189,110 @@ export default function HeroScrollExperience() {
               />
             </motion.div>
 
-            {/* Step 3: Left Side (Desktop) / Lower-Center (Mobile) Product Panel */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{
-                opacity: stage === "details" ? 1 : 0,
-                x: isMobile ? 0 : stage === "details" ? 0 : -40,
-                y: stage === "details" ? 0 : 20,
-                pointerEvents: stage === "details" ? "auto" : "none",
-              }}
-              transition={{
-                duration: stage === "details" ? 0.85 : 0.45,
-                delay: stage === "details" ? 0.35 : 0,
-                ease: [0.16, 1, 0.3, 1],
-              }}
-              style={{
-                left: isMobile ? "50%" : "max(2.5rem, calc(50% - 580px))",
-                bottom: isMobile ? "calc(1.25rem + env(safe-area-inset-bottom, 0px))" : "auto",
-                top: isMobile ? "auto" : "calc(50% + 52px)",
-                position: "absolute",
-                zIndex: 45,
-              }}
-              className={`-translate-x-1/2 md:translate-x-0 md:-translate-y-1/2 w-[calc(100vw-2.5rem)] max-w-[340px] sm:max-w-[420px] lg:max-w-[460px] xl:max-w-[480px] p-4.5 sm:p-7 md:p-8 shrink-0 flex flex-col justify-between ${
-                stage !== "details" ? "pointer-events-none" : ""
-              }`}
-            >
-              {/* 1. Transparent Frosted Glass Background Layer (Appears First) */}
+            {/* Step 3: Left Side (Desktop) / Lower-Center (Mobile) Product Panel (Hidden for Coming Soon products) */}
+            {!currentItem.isComingSoon && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
+                initial={{ opacity: 0 }}
                 animate={{
                   opacity: stage === "details" ? 1 : 0,
-                  scale: stage === "details" ? 1 : 0.95,
+                  x: isMobile ? 0 : stage === "details" ? 0 : -40,
+                  y: stage === "details" ? 0 : 20,
+                  pointerEvents: stage === "details" ? "auto" : "none",
                 }}
                 transition={{
-                  duration: stage === "details" ? 0.75 : 0.35,
+                  duration: stage === "details" ? 0.85 : 0.45,
                   delay: stage === "details" ? 0.35 : 0,
                   ease: [0.16, 1, 0.3, 1],
                 }}
-                className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-white/10 hover:bg-white/[0.13] backdrop-blur-2xl border border-white/20 shadow-[0_30px_70px_rgba(0,0,0,0.7)] pointer-events-none transition-colors duration-300"
-              />
+                style={{
+                  left: isMobile ? "50%" : "max(2.5rem, calc(50% - 580px))",
+                  bottom: isMobile ? "calc(1.25rem + env(safe-area-inset-bottom, 0px))" : "auto",
+                  top: isMobile ? "auto" : "calc(50% + 52px)",
+                  position: "absolute",
+                  zIndex: 45,
+                }}
+                className={`-translate-x-1/2 md:translate-x-0 md:-translate-y-1/2 w-[calc(100vw-2.5rem)] max-w-[340px] sm:max-w-[420px] lg:max-w-[460px] xl:max-w-[480px] p-4.5 sm:p-7 md:p-8 shrink-0 flex flex-col justify-between ${
+                  stage !== "details" ? "pointer-events-none" : ""
+                }`}
+              >
+                {/* 1. Transparent Frosted Glass Background Layer (Appears First) */}
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{
+                    opacity: stage === "details" ? 1 : 0,
+                    scale: stage === "details" ? 1 : 0.95,
+                  }}
+                  transition={{
+                    duration: stage === "details" ? 0.75 : 0.35,
+                    delay: stage === "details" ? 0.35 : 0,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="absolute inset-0 rounded-2xl sm:rounded-3xl bg-white/10 hover:bg-white/[0.13] backdrop-blur-2xl border border-white/20 shadow-[0_30px_70px_rgba(0,0,0,0.7)] pointer-events-none transition-colors duration-300"
+                />
 
-              {/* 2. Content Layer (Staggered Entry after the transparent glass appears) */}
-              <div className="relative z-10">
+                {/* 2. Content Layer (Staggered Entry after the transparent glass appears) */}
+                <div className="relative z-10">
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{
+                      opacity: stage === "details" ? 1 : 0,
+                      y: stage === "details" ? 0 : 12,
+                    }}
+                    transition={{
+                      duration: 0.65,
+                      delay: stage === "details" ? 0.55 : 0,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="mb-0.5"
+                  >
+                    <span className="text-[9px] sm:text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#A9D3F4]">
+                      {currentItem.title1}
+                    </span>
+                  </motion.div>
+
+                  <motion.h1
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{
+                      opacity: stage === "details" ? 1 : 0,
+                      y: stage === "details" ? 0 : 12,
+                    }}
+                    transition={{
+                      duration: 0.65,
+                      delay: stage === "details" ? 0.68 : 0,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="text-xl sm:text-3xl md:text-[42px] font-heading font-black tracking-tight text-white mb-1 sm:mb-3 leading-tight drop-shadow-md"
+                  >
+                    {currentItem.id === "clean-bean-original" ? "CLEAN BEAN" : currentItem.flavor.toUpperCase()}
+                  </motion.h1>
+
+                  <motion.p
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{
+                      opacity: stage === "details" ? 1 : 0,
+                      y: stage === "details" ? 0 : 12,
+                    }}
+                    transition={{
+                      duration: 0.65,
+                      delay: stage === "details" ? 0.78 : 0,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="text-[10.5px] sm:text-xs md:text-base text-white/80 font-sans font-normal leading-snug mb-1.5 sm:mb-5 line-clamp-2 sm:line-clamp-none"
+                  >
+                    {currentItem.id === "clean-bean-original"
+                      ? "100% natural tofu cat litter made from food-grade soybean fiber. Fast clumping, 99.9% dust-free, and flushable."
+                      : "Official Meow Ganics vintage art poster. High quality archival print on heavy matte paper."}
+                  </motion.p>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: stage === "details" ? 1 : 0 }}
+                  transition={{ duration: 0.5, delay: stage === "details" ? 0.88 : 0 }}
+                  className="relative z-10 border-t border-dashed border-white/20 w-full my-1 sm:my-3"
+                />
+
+                {/* Price & Add to Cart (Staggers in at the end) */}
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{
@@ -1222,132 +1301,93 @@ export default function HeroScrollExperience() {
                   }}
                   transition={{
                     duration: 0.65,
-                    delay: stage === "details" ? 0.55 : 0,
+                    delay: stage === "details" ? 0.95 : 0,
                     ease: [0.16, 1, 0.3, 1],
                   }}
-                  className="mb-0.5"
+                  className="relative z-10 flex items-center justify-between gap-3 sm:gap-4 pt-0.5"
                 >
-                  <span className="text-[9px] sm:text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#A9D3F4]">
-                    {currentItem.title1}
-                  </span>
+                  <div className="flex flex-col shrink-0">
+                    <span className="text-[8.5px] sm:text-[10px] font-mono uppercase tracking-widest text-white/50">
+                      Price
+                    </span>
+                    <span className="text-lg sm:text-3xl md:text-4xl font-heading font-black text-white tracking-tight">
+                      {currentItem.price}
+                    </span>
+                  </div>
+
+                  <button
+                    onClick={() => handleQuickAdd(currentItem)}
+                    className={`flex-1 py-2 sm:py-3.5 px-3.5 sm:px-6 rounded-full font-heading font-black text-xs sm:text-sm md:text-base flex items-center justify-center gap-1.5 sm:gap-2 hover:scale-105 active:scale-95 transition-all shadow-[0_8px_25px_rgba(255,255,255,0.22)] cursor-pointer ${
+                      addedAnimation
+                        ? "bg-[#2B7A5D] text-white"
+                        : "bg-white text-brand-black hover:bg-white/95"
+                    }`}
+                  >
+                    <CartIcon className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 shrink-0" />
+                    <span className="truncate">
+                      {addedAnimation ? "Added! 🐾" : "Add to Cart"}
+                    </span>
+                  </button>
                 </motion.div>
 
-                <motion.h1
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{
-                    opacity: stage === "details" ? 1 : 0,
-                    y: stage === "details" ? 0 : 12,
-                  }}
-                  transition={{
-                    duration: 0.65,
-                    delay: stage === "details" ? 0.68 : 0,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="text-xl sm:text-3xl md:text-[42px] font-heading font-black tracking-tight text-white mb-1 sm:mb-3 leading-tight drop-shadow-md"
+                {/* Policy & Help Links below dotted line & Add to Cart */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: stage === "details" ? 1 : 0 }}
+                  transition={{ duration: 0.5, delay: stage === "details" ? 1.05 : 0 }}
+                  className="relative z-10 pt-2 sm:pt-2.5 mt-2 sm:mt-2.5 border-t border-white/10 flex flex-wrap items-center justify-center gap-x-2.5 sm:gap-x-3 gap-y-1 text-[9px] xs:text-[10px] sm:text-[11px] font-sans font-medium text-white/50"
                 >
-                  {currentItem.id === "clean-bean-original" ? "CLEAN BEAN" : currentItem.flavor.toUpperCase()}
-                </motion.h1>
+                  <Link
+                    href="/privacy-policy"
+                    className="hover:text-white transition-colors"
+                  >
+                    Privacy Policy
+                  </Link>
+                  <span className="text-white/30">•</span>
+                  <Link
+                    href="/terms-and-conditions"
+                    className="hover:text-white transition-colors"
+                  >
+                    Terms & Conditions
+                  </Link>
+                  <span className="text-white/30">•</span>
+                  <Link
+                    href="/return-and-refund-policy"
+                    className="hover:text-white transition-colors"
+                  >
+                    Return & Refund Policy
+                  </Link>
+                  <span className="text-white/30">•</span>
+                  <Link
+                    href="/contact-us"
+                    className="hover:text-white transition-colors"
+                  >
+                    Contact Us
+                  </Link>
+                </motion.div>
+              </motion.div>
+            )}
 
-                <motion.p
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{
-                    opacity: stage === "details" ? 1 : 0,
-                    y: stage === "details" ? 0 : 12,
-                  }}
-                  transition={{
-                    duration: 0.65,
-                    delay: stage === "details" ? 0.78 : 0,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className="text-[10.5px] sm:text-xs md:text-base text-white/80 font-sans font-normal leading-snug mb-1.5 sm:mb-5 line-clamp-2 sm:line-clamp-none"
-                >
-                  {currentItem.id === "clean-bean-original"
-                    ? "100% natural tofu cat litter made from food-grade soybean fiber. Fast clumping, 99.9% dust-free, and flushable."
-                    : "Official Meow Ganics vintage art poster. High quality archival print on heavy matte paper."}
-                </motion.p>
-              </div>
-
+            {/* If Coming Soon & Full Screen: Tap button to return to carousel */}
+            {currentItem.isComingSoon && stage === "details" && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: stage === "details" ? 1 : 0 }}
-                transition={{ duration: 0.5, delay: stage === "details" ? 0.88 : 0 }}
-                className="relative z-10 border-t border-dashed border-white/20 w-full my-1 sm:my-3"
-              />
-
-              {/* Price & Add to Cart (Staggers in at the end) */}
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{
-                  opacity: stage === "details" ? 1 : 0,
-                  y: stage === "details" ? 0 : 12,
-                }}
-                transition={{
-                  duration: 0.65,
-                  delay: stage === "details" ? 0.95 : 0,
-                  ease: [0.16, 1, 0.3, 1],
-                }}
-                className="relative z-10 flex items-center justify-between gap-3 sm:gap-4 pt-0.5"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.4 }}
+                className="absolute z-50 bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-3 pointer-events-auto"
               >
-                <div className="flex flex-col shrink-0">
-                  <span className="text-[8.5px] sm:text-[10px] font-mono uppercase tracking-widest text-white/50">
-                    Price
-                  </span>
-                  <span className="text-lg sm:text-3xl md:text-4xl font-heading font-black text-white tracking-tight">
-                    {currentItem.price}
-                  </span>
-                </div>
-
                 <button
-                  onClick={() => handleQuickAdd(currentItem)}
-                  className={`flex-1 py-2 sm:py-3.5 px-3.5 sm:px-6 rounded-full font-heading font-black text-xs sm:text-sm md:text-base flex items-center justify-center gap-1.5 sm:gap-2 hover:scale-105 active:scale-95 transition-all shadow-[0_8px_25px_rgba(255,255,255,0.22)] cursor-pointer ${
-                    addedAnimation
-                      ? "bg-[#2B7A5D] text-white"
-                      : "bg-white text-brand-black hover:bg-white/95"
-                  }`}
+                  onClick={() => setStage("carousel")}
+                  className="px-5 py-2.5 rounded-full bg-black/75 hover:bg-black/90 text-white font-heading text-xs font-bold uppercase tracking-wider backdrop-blur-md border border-white/20 shadow-xl flex items-center gap-2 cursor-pointer transition-all hover:scale-105 active:scale-95"
                 >
-                  <CartIcon className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 shrink-0" />
-                  <span className="truncate">
-                    {addedAnimation ? "Added! 🐾" : "Add to Cart"}
-                  </span>
+                  <svg className="w-3.5 h-3.5 stroke-current stroke-2 fill-none" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                  <span>Back to Carousel</span>
                 </button>
               </motion.div>
-
-              {/* Policy & Help Links below dotted line & Add to Cart */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: stage === "details" ? 1 : 0 }}
-                transition={{ duration: 0.5, delay: stage === "details" ? 1.05 : 0 }}
-                className="relative z-10 pt-2 sm:pt-2.5 mt-2 sm:mt-2.5 border-t border-white/10 flex flex-wrap items-center justify-center gap-x-2.5 sm:gap-x-3 gap-y-1 text-[9px] xs:text-[10px] sm:text-[11px] font-sans font-medium text-white/50"
-              >
-                <Link
-                  href="/privacy-policy"
-                  className="hover:text-white transition-colors"
-                >
-                  Privacy Policy
-                </Link>
-                <span className="text-white/30">•</span>
-                <Link
-                  href="/terms-and-conditions"
-                  className="hover:text-white transition-colors"
-                >
-                  Terms & Conditions
-                </Link>
-                <span className="text-white/30">•</span>
-                <Link
-                  href="/return-and-refund-policy"
-                  className="hover:text-white transition-colors"
-                >
-                  Return & Refund Policy
-                </Link>
-                <span className="text-white/30">•</span>
-                <Link
-                  href="/contact-us"
-                  className="hover:text-white transition-colors"
-                >
-                  Contact Us
-                </Link>
-              </motion.div>
-            </motion.div>
+            )}
           </motion.div>
 
           {/* ── Carousel Mini-Headline on Left Center (Visible only in stage === 'carousel') ── */}
@@ -1505,6 +1545,15 @@ export default function HeroScrollExperience() {
               <div className="flex items-center gap-2 text-white/80 font-heading text-xs">
                 <span className="w-2 h-2 rounded-full bg-[#A9D3F4] animate-pulse" />
                 <span>Focus • Scroll for Details</span>
+              </div>
+            ) : currentItem.isComingSoon ? (
+              <div className="flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-black/60 border border-white/20 backdrop-blur-md text-white/90 text-[11px] sm:text-xs font-heading font-medium tracking-wide shadow-sm select-none">
+                <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse shrink-0 shadow-[0_0_8px_#f59e0b]" />
+                <span className="flex items-center gap-1.5">
+                  <span className="font-bold text-amber-300">Coming Soon</span>
+                  <span className="text-white/40">•</span>
+                  <span>Swipe ⇄</span>
+                </span>
               </div>
             ) : (
               <button

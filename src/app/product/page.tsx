@@ -90,7 +90,7 @@ export default function ProductPage() {
             alt="Meow Ganics Logo"
             width={1776}
             height={725}
-            className="w-[72vw] xs:w-[74vw] max-w-[315px] sm:max-w-none sm:w-auto h-auto max-h-[114px] xs:max-h-[126px] sm:max-h-[96px] md:max-h-[110px] object-contain object-left transition-transform duration-300 group-hover:scale-105 origin-left drop-shadow-[0_4px_8px_rgba(0,0,0,0.2)]"
+            className="w-[72vw] xs:w-[74vw] max-w-[315px] sm:max-w-none sm:w-[260px] md:w-[285px] lg:w-[340px] h-auto max-h-[114px] xs:max-h-[126px] sm:max-h-[84px] md:max-h-[92px] lg:max-h-[139px] object-contain object-left transition-transform duration-300 group-hover:scale-105 origin-left drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)]"
             priority
           />
         </Link>

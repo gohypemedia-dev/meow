@@ -1,7 +1,6 @@
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
-import ProfileMenu from "@/components/ProfileMenu";
+import PageHeader from "@/components/PageHeader";
 
 export const metadata = {
   title: "Terms & Conditions | MeowGanics",
@@ -10,33 +9,9 @@ export const metadata = {
 
 export default function TermsAndConditionsPage() {
   return (
-    <div className="min-h-screen bg-[#111317] text-white flex flex-col justify-between selection:bg-[#A9D3F4] selection:text-black">
-      {/* Header */}
-      <header className="relative z-30 px-4 sm:px-8 md:px-12 py-4 flex items-center justify-between border-b border-white/10 bg-[#111317]">
-        <Link href="/" className="flex items-center group">
-          <Image
-            src="/meowganics_logo_transparent.png"
-            alt="MeowGanics Logo"
-            width={1776}
-            height={725}
-            className="w-auto h-10 sm:h-12 object-contain"
-            priority
-          />
-        </Link>
-
-        <div className="flex items-center gap-3 sm:gap-4">
-          <Link
-            href="/"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-heading font-medium bg-white/10 hover:bg-white/20 text-white transition-all border border-white/15"
-          >
-            <svg className="w-3.5 h-3.5 stroke-current stroke-2 fill-none" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            <span>Back to Store</span>
-          </Link>
-          <ProfileMenu theme="frameless" iconClassName="w-6 h-6 text-white" />
-        </div>
-      </header>
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#111317] text-white flex flex-col justify-between selection:bg-[#A9D3F4] selection:text-black">
+      {/* Header - Matching Home Page Logo & Nav Controls */}
+      <PageHeader />
 
       {/* Main Content */}
       <main className="relative z-10 max-w-3xl mx-auto w-full px-4 sm:px-6 py-12 sm:py-16 flex-1">

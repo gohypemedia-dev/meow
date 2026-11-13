@@ -200,3 +200,40 @@ button {
   animation: scroll-reel-exit 0.24s cubic-bezier(0.65, 0, 0.35, 1) forwards;
 }
 
+
+/* Hero offer banner on laptop/desktop: sits on top of the peeking cat's head,
+   nestled between its ears. The cat art is 160vw wide, left -34vw, anchored 12vh from
+   the bottom. Measured from the artwork: ears at ~60vw and ~85vw, head top between
+   them ~(12vh + 16-19vw) above the viewport bottom. Banner is centred at 73vw,
+   16vw wide (spans ~65-81vw), with its bottom just above the head. */
+@media (min-width: 1024px) {
+  .hero-offer-slot {
+    left: 73vw;
+    top: auto;
+    bottom: calc(14vh + 22.5vw);
+    width: min(19vw, 455px, calc((86vh - 22.5vw - 70px) * 1.474));
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+/* Peeking cat's eyes: pupils glance right, then left, then back to centre.
+   Drawn as an SVG overlay on top of the hero artwork (see CatEyes in HeroBackground). */
+@keyframes cat-glance {
+  0%, 28%   { transform: translateX(0); }
+  34%, 50%  { transform: translateX(9px); }
+  56%, 72%  { transform: translateX(-9px); }
+  78%, 100% { transform: translateX(0); }
+}
+
+
+.cat-pupil {
+  animation: cat-glance 9s ease-in-out infinite;
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .cat-pupil {
+    animation: none;
+  }
+}

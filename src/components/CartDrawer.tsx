@@ -137,38 +137,38 @@ export default function CartDrawer() {
 
   const rowClass = (active: boolean) =>
     `relative rounded-[18px] px-4 py-2.5 sm:py-3 cursor-pointer select-none border backdrop-blur-md transition-all duration-200 ${active
-      ? "bg-white/70 border-black/70 shadow-[0_6px_20px_rgba(0,0,0,0.12)]"
-      : "bg-white/35 border-black/15 hover:bg-white/50"
+      ? "bg-white border-black/80 shadow-[0_4px_14px_rgba(0,0,0,0.08)]"
+      : "bg-white/60 border-black/15 hover:bg-white/80"
     }`;
 
   return (
     <AnimatePresence>
       {isOpen && (
         <div className="fixed inset-0 z-[999] overflow-hidden">
-          {/* Backdrop */}
+          {/* Backdrop - Frosted White Blur */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
             onClick={closeCart}
-            className="absolute inset-0 bg-black/70 backdrop-blur-md"
+            className="absolute inset-0 bg-white/45 backdrop-blur-xl"
           />
 
           {/* Floating Panel */}
-          <div className="absolute inset-0 min-[460px]:left-auto flex justify-center p-3 pointer-events-none">
+          <div className="absolute inset-0 min-[460px]:left-auto flex items-center justify-center min-[460px]:justify-end p-4 sm:p-6 pointer-events-none">
             <motion.div
               data-lenis-prevent
-              initial={{ x: "110%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "110%" }}
+              initial={{ x: "110%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: "110%", opacity: 0 }}
               transition={{ type: "spring", damping: 28, stiffness: 280 }}
-              className="w-full max-w-[420px] h-full bg-[#b9b9b9] text-black rounded-[36px] min-[460px]:rounded-[44px] overflow-hidden shadow-[0_30px_80px_rgba(0,0,0,0.55)] ring-1 ring-white/40 flex flex-col pointer-events-auto relative"
+              className="w-full max-w-[365px] sm:max-w-[390px] h-[82vh] max-h-[700px] bg-white/90 text-black rounded-[32px] sm:rounded-[38px] overflow-hidden shadow-[0_25px_70px_rgba(0,0,0,0.25)] ring-1 ring-black/5 flex flex-col pointer-events-auto relative backdrop-blur-2xl"
             >
               {/* Close Button (floats over image) */}
               <button
                 onClick={closeCart}
-                className="absolute top-[max(1rem,env(safe-area-inset-top))] right-4 z-20 w-10 h-10 sm:w-9 sm:h-9 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-md border border-white/25 text-white flex items-center justify-center transition-all cursor-pointer active:scale-90"
+                className="absolute top-3.5 right-3.5 z-20 w-9 h-9 sm:w-8.5 sm:h-8.5 rounded-full bg-black/30 hover:bg-black/50 backdrop-blur-md border border-white/25 text-white flex items-center justify-center transition-all cursor-pointer active:scale-90"
                 aria-label="Close cart"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -192,11 +192,11 @@ export default function CartDrawer() {
                   />
                   {/* Darken behind the title */}
                   <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/35 to-transparent" />
-                  {/* Fade into the silver panel */}
-                  <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-[#d6d6d6] to-transparent" />
+                  {/* Fade into the white panel */}
+                  <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white/95 to-transparent" />
 
                   {/* Title block */}
-                  <div className="absolute left-5 right-5 bottom-10 sm:bottom-14">
+                  <div className="absolute left-5 right-5 bottom-8 sm:bottom-10">
                     <div className="inline-flex items-center gap-1 px-2.5 py-[3px] rounded-full bg-black/35 backdrop-blur-md border border-white/30 text-white text-[11px] font-semibold mb-2">
                       <span>🌱</span>
                       <span>100% Organic Tofu</span>
@@ -214,8 +214,8 @@ export default function CartDrawer() {
                   </div>
                 </div>
 
-                {/* 2. Silver Content Area */}
-                <div className="shrink-0 min-[460px]:flex-1 -mt-px bg-gradient-to-b from-[#d6d6d6] via-[#cbcbcb] to-[#b4b4b4] px-4 min-[380px]:px-5 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-6 flex flex-col">
+                {/* 2. White Blur Content Area */}
+                <div className="shrink-0 min-[460px]:flex-1 -mt-px bg-white/85 backdrop-blur-xl px-4 min-[380px]:px-5 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-6 flex flex-col">
                   <p className="text-center text-[13px] font-semibold text-black/80 pt-2 mb-3 sm:mb-4 relative z-10">
                     Select your plan
                   </p>

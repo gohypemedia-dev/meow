@@ -25,6 +25,49 @@ function SurpriseMarks({ src, box }: { src: string; box: typeof MARKS_DESKTOP })
   );
 }
 
+// The cat's eyes, measured in each artwork's own pixel space. Each eye is redrawn on top of the
+// artwork (blue ellipse + black pupil) so the pupils can glance around and the cat can blink.
+type Eye = { cx: number; cy: number; rx: number; ry: number; px: number; py: number; prx: number; pry: number };
+const EYES_DESKTOP: { w: number; h: number; eyes: Eye[] } = {
+  w: 1672,
+  h: 941,
+  eyes: [
+    { cx: 1027.5, cy: 719.5, rx: 52, ry: 48, px: 1031.5, py: 717, prx: 17, pry: 25 },
+    { cx: 1194, cy: 718.5, rx: 55.5, ry: 50, px: 1185.5, py: 716.5, prx: 17, pry: 25 },
+  ],
+};
+const EYES_MOBILE: typeof EYES_DESKTOP = {
+  w: 941,
+  h: 1672,
+  eyes: [
+    { cx: 589, cy: 1324, rx: 49.5, ry: 48.5, px: 592.5, py: 1322.5, prx: 17, pry: 24.5 },
+    { cx: 743.5, cy: 1323.5, rx: 53, ry: 50, px: 734.5, py: 1322.5, prx: 17, pry: 24.5 },
+  ],
+};
+
+function CatEyes({ art, id }: { art: typeof EYES_DESKTOP; id: string }) {
+  return (
+    <svg
+      className="absolute inset-0 w-full h-full pointer-events-none"
+      viewBox={`0 0 ${art.w} ${art.h}`}
+      preserveAspectRatio="xMidYMid meet"
+      aria-hidden="true"
+    >
+      {art.eyes.map((e, i) => (
+        <g key={i}>
+          <clipPath id={`${id}-eye-${i}`}>
+            <ellipse cx={e.cx} cy={e.cy} rx={e.rx} ry={e.ry} />
+          </clipPath>
+          <g clipPath={`url(#${id}-eye-${i})`}>
+            <ellipse cx={e.cx} cy={e.cy} rx={e.rx + 1} ry={e.ry + 1} fill="#A2DEFC" />
+            <ellipse className="cat-pupil" cx={e.px} cy={e.py} rx={e.prx} ry={e.pry} fill="#000" />
+          </g>
+        </g>
+      ))}
+    </svg>
+  );
+}
+
 export default function HeroBackground() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
@@ -78,6 +121,7 @@ export default function HeroBackground() {
             priority
           />
           <SurpriseMarks src="/hero-marks-mobile.png" box={MARKS_MOBILE} />
+          <CatEyes art={EYES_MOBILE} id="cat-m" />
         </div>
       </div>
 
@@ -102,6 +146,7 @@ export default function HeroBackground() {
           priority
         />
         <SurpriseMarks src="/hero-marks.png" box={MARKS_DESKTOP} />
+        <CatEyes art={EYES_DESKTOP} id="cat-d" />
       </div>
 
       {/* Tablet view (md to lg): Uses the landscape artwork */}
