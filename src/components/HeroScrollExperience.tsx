@@ -5,7 +5,7 @@ import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, anima
 import Image from "next/image";
 import Link from "next/link";
 import InteractiveCat from "./InteractiveCat";
-import HeroBackground from "./HeroBackground";
+import HeroBackground, { HeroBricks } from "./HeroBackground";
 import HeroOfferBanner from "./HeroOfferBanner";
 import { useCart } from "@/context/CartContext";
 import { useCleanBean, formatPrice } from "@/lib/useCleanBean";
@@ -788,6 +788,15 @@ export default function HeroScrollExperience() {
         >
           <HeroBackground />
         </motion.div>
+
+        {/* Brick accents: stay visible on every cream step (hidden behind full-screen product views) */}
+        <div
+          className={`absolute inset-0 pointer-events-none z-0 transition-opacity duration-700 ${
+            lightPhase ? "opacity-100" : "opacity-0"
+          }`}
+        >
+          <HeroBricks />
+        </div>
 
         {/* Layer 0.5: Clean Studio Solid Pure Black Background */}
         <div

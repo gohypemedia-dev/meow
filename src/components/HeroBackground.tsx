@@ -26,7 +26,7 @@ function SurpriseMarks({ src, box }: { src: string; box: typeof MARKS_DESKTOP })
 }
 
 // The cat's eyes, measured in each artwork's own pixel space. Each eye is redrawn on top of the
-// artwork (blue ellipse + black pupil) so the pupils can glance around and the cat can blink.
+// artwork (blue ellipse + black pupil) so the pupils can glance around.
 type Eye = { cx: number; cy: number; rx: number; ry: number; px: number; py: number; prx: number; pry: number };
 const EYES_DESKTOP: { w: number; h: number; eyes: Eye[] } = {
   w: 1672,
@@ -68,12 +68,11 @@ function CatEyes({ art, id }: { art: typeof EYES_DESKTOP; id: string }) {
   );
 }
 
-export default function HeroBackground() {
+/** Decorative cream "brick" accents. Rendered separately from the hero artwork so they stay on
+ *  screen across every cream-background step of the scroll experience. */
+export function HeroBricks() {
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
-      {/* ── Base Peach Background ── */}
-      <div className="absolute inset-0 bg-[#FEF8EA]" />
-
+    <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
       {/* ── Decorative Brick Accents (Color: #EDDEC5) Matching Mockup ── */}
       {/* Top Right Brick Cluster */}
       <div className="absolute top-24 sm:top-28 right-4 sm:right-12 md:right-20 flex flex-col gap-2 opacity-90">
@@ -101,6 +100,17 @@ export default function HeroBackground() {
         </div>
         <div className="w-16 sm:w-22 h-3 sm:h-4 bg-[#EDDEC5] rounded-[3px] ml-5" />
       </div>
+    </div>
+  );
+}
+
+export default function HeroBackground() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden select-none z-0">
+      {/* ── Base Peach Background ── */}
+      <div className="absolute inset-0 bg-[#FEF8EA]" />
+
+      {/* Brick accents live in <HeroBricks /> so they can stay visible after scrolling. */}
 
       {/* ── Seamless White Floor Base (Fills any bottom space) ── */}
       <div className="absolute bottom-0 inset-x-0 h-[4vh] sm:h-[6vh] md:h-[8vh] bg-white z-0" />
