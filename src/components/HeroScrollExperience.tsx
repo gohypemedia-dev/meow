@@ -1252,6 +1252,25 @@ export default function HeroScrollExperience() {
 
                 {/* 2. Content Layer (Staggered Entry after the transparent glass appears) */}
                 <div className="@container relative z-10">
+                  {/* Small eyebrow above the title: the product name from Shopify */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{
+                      opacity: stage === "details" ? 1 : 0,
+                      y: stage === "details" ? 0 : 12,
+                    }}
+                    transition={{
+                      duration: 0.65,
+                      delay: stage === "details" ? 0.55 : 0,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                    className="mb-0.5"
+                  >
+                    <span className="text-[9px] sm:text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#A9D3F4]">
+                      {currentItem.id === "clean-bean-original" ? cleanBean.name : currentItem.title1}
+                    </span>
+                  </motion.div>
+
                   <motion.h1
                     initial={{ opacity: 0, y: 12 }}
                     animate={{
@@ -1265,7 +1284,7 @@ export default function HeroScrollExperience() {
                     }}
                     className="text-[min(34px,6.6cqw)] whitespace-nowrap truncate font-heading font-black tracking-tight text-white mb-1 sm:mb-3 leading-tight drop-shadow-md"
                   >
-                    {currentItem.id === "clean-bean-original" ? cleanBean.name.toUpperCase() : currentItem.flavor.toUpperCase()}
+                    {currentItem.id === "clean-bean-original" ? "CLEAN BEAN" : currentItem.flavor.toUpperCase()}
                   </motion.h1>
 
                   <motion.p
