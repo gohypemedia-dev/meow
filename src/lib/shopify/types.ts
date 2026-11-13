@@ -75,6 +75,7 @@ export interface ShopifyProduct {
   handle: string;
   title: string;
   descriptionHtml: string;
+  tags?: string[];
   featuredImage: ShopifyImage | null;
   options: ShopifyProductOption[];
   media: { nodes: ShopifyMedia[] };
@@ -120,6 +121,8 @@ export interface EnrichedProduct extends Product {
   available?: boolean;
   sizes: EnrichedProductSize[];
   gallery?: GalleryMediaItem[];
+  /** Product tags from Shopify, shown as feature chips. */
+  tags?: string[];
 }
 
 export interface ShopifyCatalog {

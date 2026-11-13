@@ -32,6 +32,7 @@ export const CATALOG_QUERY = /* GraphQL */ `
         handle
         title
         descriptionHtml
+        tags
         featuredImage {
           url
           altText
@@ -384,6 +385,7 @@ export function buildCatalog(data: CatalogQueryResult): ShopifyCatalog {
       name: shopifyProd.title || baseProduct.name,
       description: shopifyDescriptionText || baseProduct.description,
       longDescription: shopifyProd.descriptionHtml || baseProduct.longDescription,
+      tags: shopifyProd.tags ?? [],
       basePrice: lowestPrice > 0 ? lowestPrice : baseProduct.basePrice,
       image: shopifyProd.featuredImage?.url || baseProduct.image,
       flavors: flavors && flavors.length > 0 ? flavors : undefined,

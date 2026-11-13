@@ -61,6 +61,9 @@ export default function HeroScrollExperience() {
   const [introPhase, setIntroPhase] = useState<IntroPhase>("hero");
   const [isDocked, setIsDocked] = useState(false);
   const [stage, setStage] = useState<ShowcaseStage>("carousel");
+  // The whole scroll experience uses the home page's cream background. Only the full-screen
+  // "focus"/"details" stages (photo covers the screen) switch the header to white-on-dark.
+  const lightPhase = stage === "carousel";
   const [activeIndex, setActiveIndex] = useState(0);
   const [slideDir, setSlideDir] = useState(0); // -1 = prev, 0 = idle, 1 = next
   const [addedAnimation, setAddedAnimation] = useState(false);
@@ -734,7 +737,7 @@ export default function HeroScrollExperience() {
       onPointerDown={onPointerDown}
       onPointerUp={onPointerUp}
       className={`fixed inset-0 w-full h-[100dvh] max-h-[100dvh] overflow-hidden select-none flex flex-col justify-between transition-colors duration-700 ${
-        introPhase === "hero" ? "bg-[#FEF8EA]" : "bg-[#07080A]"
+        lightPhase ? "bg-[#FEF8EA]" : "bg-[#07080A]"
       }`}
     >
         {/* ── Native-Feel Pull-To-Refresh Indicator (Mobile Hero Mode) ── */}
@@ -787,13 +790,20 @@ export default function HeroScrollExperience() {
         </motion.div>
 
         {/* Layer 0.5: Clean Studio Solid Pure Black Background */}
-        <motion.div
-          style={{ opacity: darkBgOpacity }}
-          className="absolute inset-0 bg-[#07080A] pointer-events-none z-0"
-        />
+        <div
+          className={`absolute inset-0 pointer-events-none z-0 transition-opacity duration-700 ${
+            lightPhase ? "opacity-0" : "opacity-100"
+          }`}
+        >
+          <motion.div style={{ opacity: darkBgOpacity }} className="absolute inset-0 bg-[#07080A]" />
+        </div>
 
         {/* Layer 1: Ambient Background Color Glow */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div
+          className={`absolute inset-0 pointer-events-none overflow-hidden z-0 transition-opacity duration-700 ${
+            lightPhase ? "opacity-0" : "opacity-100"
+          }`}
+        >
           <motion.div
             style={{ opacity: ambientOpacity }}
             animate={{
@@ -830,7 +840,7 @@ export default function HeroScrollExperience() {
               theme="frameless"
               dropdownAlign="right"
               iconClassName={`w-6.5 h-6.5 sm:w-7 sm:h-7 ${
-                introPhase === "hero" ? "text-brand-black" : "text-white"
+                lightPhase ? "text-brand-black" : "text-white"
               }`}
             />
           </div>
@@ -840,14 +850,14 @@ export default function HeroScrollExperience() {
             <button
               onClick={openCart}
               className={`relative p-1 hover:scale-110 active:scale-95 transition-transform flex items-center justify-center cursor-pointer ${
-                introPhase === "hero" ? "text-brand-black" : "text-white"
+                lightPhase ? "text-brand-black" : "text-white"
               }`}
               aria-label="Open Cart"
             >
               <CartIcon className="w-6.5 h-6.5 sm:w-7 sm:h-7" />
               <span
                 className={`absolute -top-1.5 -right-2 text-[10px] font-heading font-black min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center shadow-xs ${
-                  introPhase === "hero"
+                  lightPhase
                     ? "bg-brand-black text-brand-white"
                     : "bg-brand-white text-brand-black"
                 }`}
@@ -866,7 +876,7 @@ export default function HeroScrollExperience() {
               setStage("details");
             }}
             className={`hidden xs:flex items-center gap-1.5 sm:gap-2 px-3.5 sm:px-5 py-2 sm:py-2.5 rounded-full font-heading font-bold text-xs md:text-sm hover:scale-105 active:scale-95 transition-all shadow-sm cursor-pointer ${
-              introPhase === "hero"
+              lightPhase
                 ? "bg-black text-white hover:bg-black/85"
                 : stage === "details" && isDocked
                 ? "bg-[#A9D3F4] text-brand-black ring-2 ring-white/50"
@@ -889,7 +899,7 @@ export default function HeroScrollExperience() {
             theme="frameless"
             dropdownAlign="right"
             iconClassName={`w-8 h-8 xs:w-8.5 xs:h-8.5 ${
-              introPhase === "hero" ? "text-brand-black" : "text-white"
+              lightPhase ? "text-brand-black" : "text-white"
             }`}
           />
 
@@ -897,14 +907,14 @@ export default function HeroScrollExperience() {
           <button
             onClick={openCart}
             className={`relative p-0 ml-1 hover:scale-110 active:scale-95 transition-transform flex items-center justify-center cursor-pointer ${
-              introPhase === "hero" ? "text-brand-black" : "text-white"
+              lightPhase ? "text-brand-black" : "text-white"
             }`}
             aria-label="Open Cart"
           >
             <CartIcon className="w-8 h-8 xs:w-8.5 xs:h-8.5" />
             <span
               className={`absolute -top-1.5 -right-2 text-[10px] font-heading font-black min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center shadow-xs ${
-                introPhase === "hero"
+                lightPhase
                   ? "bg-brand-black text-brand-white"
                   : "bg-brand-white text-brand-black"
               }`}
@@ -921,7 +931,7 @@ export default function HeroScrollExperience() {
           opacity: heroBannerOpacity,
           y: heroBannerY,
         }}
-        className={`absolute z-35 hero-offer-slot left-1/2 -translate-x-1/2 top-[210px] xs:top-[222px] sm:top-[230px] md:top-[17vh] w-full flex justify-center px-4 pointer-events-none ${
+        className={`absolute z-35 hero-offer-slot left-1/2 -translate-x-1/2 top-[210px] xs:top-[222px] sm:top-[230px] md:top-[17vh] w-full flex justify-center px-2 sm:px-4 pointer-events-none ${
           introPhase === "hero" ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
@@ -1241,25 +1251,7 @@ export default function HeroScrollExperience() {
                 />
 
                 {/* 2. Content Layer (Staggered Entry after the transparent glass appears) */}
-                <div className="relative z-10">
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{
-                      opacity: stage === "details" ? 1 : 0,
-                      y: stage === "details" ? 0 : 12,
-                    }}
-                    transition={{
-                      duration: 0.65,
-                      delay: stage === "details" ? 0.55 : 0,
-                      ease: [0.16, 1, 0.3, 1],
-                    }}
-                    className="mb-0.5"
-                  >
-                    <span className="text-[9px] sm:text-xs font-mono font-bold uppercase tracking-[0.2em] text-[#A9D3F4]">
-                      {currentItem.title1}
-                    </span>
-                  </motion.div>
-
+                <div className="@container relative z-10">
                   <motion.h1
                     initial={{ opacity: 0, y: 12 }}
                     animate={{
@@ -1271,7 +1263,7 @@ export default function HeroScrollExperience() {
                       delay: stage === "details" ? 0.68 : 0,
                       ease: [0.16, 1, 0.3, 1],
                     }}
-                    className="text-xl sm:text-3xl md:text-[42px] font-heading font-black tracking-tight text-white mb-1 sm:mb-3 leading-tight drop-shadow-md"
+                    className="text-[min(34px,6.6cqw)] whitespace-nowrap truncate font-heading font-black tracking-tight text-white mb-1 sm:mb-3 leading-tight drop-shadow-md"
                   >
                     {currentItem.id === "clean-bean-original" ? cleanBean.name.toUpperCase() : currentItem.flavor.toUpperCase()}
                   </motion.h1>
@@ -1287,12 +1279,43 @@ export default function HeroScrollExperience() {
                       delay: stage === "details" ? 0.78 : 0,
                       ease: [0.16, 1, 0.3, 1],
                     }}
-                    className="text-[10.5px] sm:text-xs md:text-base text-white/80 font-sans font-normal leading-snug mb-1.5 sm:mb-5 line-clamp-2 sm:line-clamp-none"
+                    className="text-[10.5px] sm:text-xs md:text-base text-white/80 font-sans font-normal leading-snug mb-1.5 sm:mb-3 line-clamp-2 sm:line-clamp-none"
                   >
                     {currentItem.id === "clean-bean-original"
                       ? cleanBean.description
                       : "Official Meow Ganics vintage art poster. High quality archival print on heavy matte paper."}
                   </motion.p>
+
+                  {/* Feature tags (Shopify product tags, or defaults) */}
+                  {currentItem.id === "clean-bean-original" && (cleanBean.tags?.length ?? 0) > 0 && (
+                    <motion.ul
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{
+                        opacity: stage === "details" ? 1 : 0,
+                        y: stage === "details" ? 0 : 12,
+                      }}
+                      transition={{
+                        duration: 0.65,
+                        delay: stage === "details" ? 0.85 : 0,
+                        ease: [0.16, 1, 0.3, 1],
+                      }}
+                      className="flex flex-wrap gap-1 sm:gap-2 mb-1.5 sm:mb-5"
+                      aria-label="Product features"
+                    >
+                      {cleanBean.tags.map((tag, i) => (
+                        <li
+                          key={tag}
+                          className={`rounded-full px-2 py-0.5 sm:px-3 sm:py-1 text-[9px] sm:text-xs font-sans font-semibold leading-tight border ${
+                            i === 0
+                              ? "bg-[#2B7A5D]/35 border-[#7FD6A8]/40 text-[#B6F0CF]"
+                              : "bg-white/10 border-white/15 text-white/85"
+                          }`}
+                        >
+                          {tag}
+                        </li>
+                      ))}
+                    </motion.ul>
+                  )}
                 </div>
 
                 <motion.div
@@ -1340,40 +1363,32 @@ export default function HeroScrollExperience() {
                   </button>
                 </motion.div>
 
-                {/* Policy & Help Links below dotted line & Add to Cart */}
+                {/* Policy & Help Links below dotted line & Add to Cart.
+                    Always one line: the font size follows the card width (container units),
+                    so the full labels fit from small phones up to laptops. */}
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: stage === "details" ? 1 : 0 }}
                   transition={{ duration: 0.5, delay: stage === "details" ? 1.05 : 0 }}
-                  className="relative z-10 pt-2 sm:pt-2.5 mt-2 sm:mt-2.5 border-t border-white/10 flex flex-wrap items-center justify-center gap-x-2.5 sm:gap-x-3 gap-y-1 text-[9px] xs:text-[10px] sm:text-[11px] font-sans font-medium text-white/50"
+                  className="@container relative z-10 pt-2 sm:pt-2.5 mt-2 sm:mt-2.5 border-t border-white/10 w-full"
                 >
-                  <Link
-                    href="/privacy-policy"
-                    className="hover:text-white transition-colors"
-                  >
-                    Privacy Policy
-                  </Link>
-                  <span className="text-white/30">•</span>
-                  <Link
-                    href="/terms-and-conditions"
-                    className="hover:text-white transition-colors"
-                  >
-                    Terms & Conditions
-                  </Link>
-                  <span className="text-white/30">•</span>
-                  <Link
-                    href="/return-and-refund-policy"
-                    className="hover:text-white transition-colors"
-                  >
-                    Return & Refund Policy
-                  </Link>
-                  <span className="text-white/30">•</span>
-                  <Link
-                    href="/contact-us"
-                    className="hover:text-white transition-colors"
-                  >
-                    Contact Us
-                  </Link>
+                  <div className="flex flex-nowrap items-center justify-center gap-x-[0.5em] whitespace-nowrap text-[min(11px,2.6cqw)] font-sans font-medium text-white/50">
+                    <Link href="/privacy-policy" className="hover:text-white transition-colors">
+                      Privacy Policy
+                    </Link>
+                    <span className="text-white/30">•</span>
+                    <Link href="/terms-and-conditions" className="hover:text-white transition-colors">
+                      Terms & Conditions
+                    </Link>
+                    <span className="text-white/30">•</span>
+                    <Link href="/return-and-refund-policy" className="hover:text-white transition-colors">
+                      Return & Refund Policy
+                    </Link>
+                    <span className="text-white/30">•</span>
+                    <Link href="/contact-us" className="hover:text-white transition-colors">
+                      Contact Us
+                    </Link>
+                  </div>
                 </motion.div>
               </motion.div>
             )}
@@ -1430,10 +1445,10 @@ export default function HeroScrollExperience() {
                   className="flex flex-col items-start text-left w-full"
                 >
                   <h1 className="flex flex-col items-start text-left">
-                    <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-[0.2em] text-white/50 mb-0.5 sm:mb-1">
+                    <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-[0.2em] text-brand-black/55 mb-0.5 sm:mb-1">
                       {currentItem.title1}
                     </span>
-                    <span className="text-xl sm:text-2xl md:text-3xl font-heading font-black tracking-tight leading-tight text-white drop-shadow-md">
+                    <span className="text-xl sm:text-2xl md:text-3xl font-heading font-black tracking-tight leading-tight text-brand-black">
                       {currentItem.title2}
                     </span>
                   </h1>
@@ -1445,10 +1460,10 @@ export default function HeroScrollExperience() {
                           setStage("details");
                         }
                       }}
-                      className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-heading font-black text-xs sm:text-sm hover:scale-105 active:scale-95 transition-all shadow-[0_4px_18px_rgba(255,255,255,0.18)] cursor-pointer ${
+                      className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-heading font-black text-xs sm:text-sm hover:scale-105 active:scale-95 transition-all shadow-[0_4px_18px_rgba(0,0,0,0.12)] cursor-pointer ${
                         currentItem.isComingSoon
-                          ? "bg-white/20 text-white border border-white/30 cursor-default"
-                          : "bg-white text-brand-black"
+                          ? "bg-black/5 text-brand-black/70 border border-black/20 cursor-default"
+                          : "bg-brand-black text-white"
                       }`}
                     >
                       {currentItem.isComingSoon
@@ -1459,7 +1474,7 @@ export default function HeroScrollExperience() {
                     {!currentItem.isComingSoon && (
                       <button
                         onClick={() => handleQuickAdd(currentItem)}
-                        className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-white/25 hover:border-white text-white flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer bg-white/10 hover:bg-white/20 backdrop-blur-md shadow-md"
+                        className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-black/20 hover:border-black text-brand-black flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer bg-black/5 hover:bg-black/10 backdrop-blur-md shadow-md"
                         aria-label={`Quick add ${currentItem.flavor}`}
                       >
                         <CartIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
@@ -1547,7 +1562,7 @@ export default function HeroScrollExperience() {
           style={{
             opacity: bottomControlsOpacity,
           }}
-          className="relative z-40 max-w-7xl mx-auto w-full px-4 sm:px-8 md:px-12 flex items-center justify-between text-xs text-white/50 pointer-events-auto shrink-0 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+0.25rem))] sm:pb-4 transition-all duration-300"
+          className={`relative z-40 max-w-7xl mx-auto w-full px-4 sm:px-8 md:px-12 flex items-center justify-between text-xs ${lightPhase ? "text-brand-black/60" : "text-white/50"} pointer-events-auto shrink-0 pb-[max(0.75rem,calc(env(safe-area-inset-bottom,0px)+0.25rem))] sm:pb-4 transition-all duration-300`}
         >
           {/* Left Action / Stage indicator */}
           <div className="flex items-center">
@@ -1572,15 +1587,19 @@ export default function HeroScrollExperience() {
                     setStage("details");
                   }
                 }}
-                className="flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-white/20 backdrop-blur-md text-white/90 text-[11px] sm:text-xs font-heading font-medium tracking-wide shadow-sm transition-all select-none cursor-pointer"
+                className={`flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-full border backdrop-blur-md text-[11px] sm:text-xs font-heading font-medium tracking-wide shadow-sm transition-all select-none cursor-pointer ${
+                  lightPhase
+                    ? "bg-black/5 hover:bg-black/10 border-black/15 text-brand-black/80"
+                    : "bg-white/10 hover:bg-white/15 border-white/20 text-white/90"
+                }`}
               >
                 <span className="w-2 h-2 rounded-full bg-[#A9D3F4] animate-pulse shrink-0 shadow-[0_0_8px_#A9D3F4]" />
                 <span className="flex items-center gap-1.5">
                   <span>Swipe</span>
-                  <span className="text-white/60 font-mono text-[10px]">⇄</span>
-                  <span className="text-white/40">•</span>
+                  <span className="opacity-60 font-mono text-[10px]">⇄</span>
+                  <span className="opacity-40">•</span>
                   <span>Scroll</span>
-                  <span className="text-white/60 font-mono text-[10px]">↕</span>
+                  <span className="opacity-60 font-mono text-[10px]">↕</span>
                 </span>
               </button>
             )}
@@ -1596,7 +1615,7 @@ export default function HeroScrollExperience() {
             className="flex items-center gap-2.5 sm:gap-4"
           >
             {/* Dots for the carousel slides */}
-            <div className="flex items-center gap-1.5 md:pl-3 md:border-l md:border-white/15">
+            <div className={`flex items-center gap-1.5 md:pl-3 md:border-l ${lightPhase ? "md:border-black/15" : "md:border-white/15"}`}>
               {ORYZO_ITEMS.map((_, i) => {
                 const isSelected = stage === "carousel" ? activeIndex === i : i === ORYZO_ITEMS.length - 1;
 
@@ -1606,8 +1625,8 @@ export default function HeroScrollExperience() {
                     onClick={() => handleSelectIndex(i)}
                     className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                       isSelected
-                        ? "w-5 sm:w-6 bg-white"
-                        : "w-1.5 bg-white/25 hover:bg-white/50"
+                        ? `w-5 sm:w-6 ${lightPhase ? "bg-brand-black" : "bg-white"}`
+                        : `w-1.5 ${lightPhase ? "bg-black/20 hover:bg-black/40" : "bg-white/25 hover:bg-white/50"}`
                     }`}
                     aria-label={`Go to slide ${i + 1}`}
                   />
@@ -1615,7 +1634,7 @@ export default function HeroScrollExperience() {
               })}
             </div>
 
-            <span className="font-mono text-[10px] sm:text-[11px] text-white/40">
+            <span className={`font-mono text-[10px] sm:text-[11px] ${lightPhase ? "text-brand-black/45" : "text-white/40"}`}>
               {stage === "focus"
                 ? "Focus"
                 : `${activeIndex + 1} / ${TOTAL_SLIDES}`}
@@ -1630,7 +1649,11 @@ export default function HeroScrollExperience() {
               virtualScroll.current = 0;
               animate(scrollProgress, 0, { duration: 1.0, ease: [0.22, 1, 0.36, 1] });
             }}
-            className="hover:text-white text-white/60 transition-colors cursor-pointer text-[10px] sm:text-[11px] flex items-center gap-1 font-heading font-bold uppercase tracking-wider bg-white/5 hover:bg-white/10 px-2.5 sm:px-3.5 py-1.5 rounded-full border border-white/10 pointer-events-auto"
+            className={`transition-colors cursor-pointer text-[10px] sm:text-[11px] flex items-center gap-1 font-heading font-bold uppercase tracking-wider px-2.5 sm:px-3.5 py-1.5 rounded-full border pointer-events-auto ${
+              lightPhase
+                ? "text-brand-black/70 hover:text-brand-black bg-black/5 hover:bg-black/10 border-black/10"
+                : "text-white/60 hover:text-white bg-white/5 hover:bg-white/10 border-white/10"
+            }`}
           >
             <svg className="w-2.5 h-2.5 sm:w-3 sm:h-3 stroke-current stroke-2 fill-none" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />

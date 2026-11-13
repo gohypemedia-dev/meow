@@ -20,8 +20,21 @@ export interface CleanBeanData {
   variantId?: string;
   currencyCode: string;
   available: boolean;
+  /** Feature chips: Shopify product tags, or the defaults below when none are set. */
+  tags: string[];
   fromShopify: boolean;
 }
+
+/** Feature chips shown when the Shopify product has no tags. */
+export const DEFAULT_FEATURE_TAGS = [
+  "Strong Clumping",
+  "Low Dust",
+  "Odour Control",
+  "Plant-Based",
+  "Flushable",
+  "Light Weight",
+  "Easy Scoop",
+];
 
 /** Subscription offer used when the Shopify product has no selling plan. */
 const SUBSCRIBE_PRICE_FALLBACK = 590;
@@ -36,6 +49,7 @@ export const CLEAN_BEAN_FALLBACK: CleanBeanData = {
   image: "/showcase/meow/IMG_7598.PNG",
   currencyCode: "INR",
   available: true,
+  tags: DEFAULT_FEATURE_TAGS,
   fromShopify: false,
 };
 
@@ -60,6 +74,7 @@ function loadCleanBean(): Promise<CleanBeanData> {
           variantId: size?.variantId,
           currencyCode: p.currencyCode || "INR",
           available: p.available !== false,
+          tags: Array.isArray(p.tags) && p.tags.length > 0 ? p.tags : DEFAULT_FEATURE_TAGS,
           fromShopify: true,
         };
       })
@@ -75,7 +90,11 @@ export function useCleanBean(): CleanBeanData {
   const [data, setData] = useState<CleanBeanData>(CLEAN_BEAN_FALLBACK);
   useEffect(() => {
     let alive = true;
-    loadCleanBean().then((d) => alive && setData(d));
+    // Merge over the fallback so any field missing from a response (or from data cached
+    // before a field was added) still has a safe value.
+    loadCleanBean().then(
+      (d) => alive && setData({ ...CLEAN_BEAN_FALLBACK, ...d, tags: d?.tags?.length ? d.tags : DEFAULT_FEATURE_TAGS })
+    );
     return () => {
       alive = false;
     };
