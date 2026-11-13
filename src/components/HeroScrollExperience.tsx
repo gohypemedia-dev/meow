@@ -1358,7 +1358,7 @@ export default function HeroScrollExperience() {
                     <span className="text-[8.5px] sm:text-[10px] font-mono uppercase tracking-widest text-white/50">
                       Price
                     </span>
-                    <span className="text-lg sm:text-3xl md:text-4xl font-heading font-black text-white tracking-tight">
+                    <span className="text-[26px] sm:text-[40px] md:text-[48px] leading-none font-heading font-black text-white tracking-tight">
                       {currentItem.price}
                     </span>
                   </div>
