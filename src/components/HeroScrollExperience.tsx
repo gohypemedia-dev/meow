@@ -1321,14 +1321,10 @@ export default function HeroScrollExperience() {
                       className="flex flex-wrap gap-1 sm:gap-2 mb-1.5 sm:mb-5"
                       aria-label="Product features"
                     >
-                      {cleanBean.tags.map((tag, i) => (
+                      {cleanBean.tags.map((tag) => (
                         <li
                           key={tag}
-                          className={`rounded-full px-2 py-0.5 sm:px-3 sm:py-1 text-[9px] sm:text-xs font-sans font-semibold leading-tight border ${
-                            i === 0
-                              ? "bg-[#2B7A5D]/35 border-[#7FD6A8]/40 text-[#B6F0CF]"
-                              : "bg-white/10 border-white/15 text-white/85"
-                          }`}
+                          className="rounded-full px-2 py-0.5 sm:px-3 sm:py-1 text-[9px] sm:text-xs font-sans font-semibold leading-tight border bg-white/10 border-white/15 text-white/85"
                         >
                           {tag}
                         </li>
