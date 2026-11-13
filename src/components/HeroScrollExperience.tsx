@@ -8,6 +8,7 @@ import InteractiveCat from "./InteractiveCat";
 import HeroBackground from "./HeroBackground";
 import HeroOfferBanner from "./HeroOfferBanner";
 import { useCart } from "@/context/CartContext";
+import { useCleanBean, formatPrice } from "@/lib/useCleanBean";
 import CartIcon from "@/components/CartIcon";
 import ProfileMenu from "@/components/ProfileMenu";
 
@@ -83,6 +84,14 @@ export default function HeroScrollExperience() {
     };
   }, []);
   const { totalItems, openCart, addToCart } = useCart();
+
+  // Clean Bean price comes live from Shopify; other slides keep their static data.
+  const cleanBean = useCleanBean();
+  const liveItems: OryzoItem[] = ORYZO_ITEMS.map((item) =>
+    item.id === "clean-bean-original"
+      ? { ...item, priceNum: cleanBean.price, price: formatPrice(cleanBean.price, cleanBean.currencyCode) }
+      : item
+  );
 
   useEffect(() => {
     const handleResize = () => {
@@ -282,7 +291,7 @@ export default function HeroScrollExperience() {
     return Math.min(1, (p - 0.88) / 0.12);
   });
 
-  const currentItem = ORYZO_ITEMS[activeIndex] || ORYZO_ITEMS[0];
+  const currentItem = liveItems[activeIndex] || liveItems[0];
   const TOTAL_SLIDES = ORYZO_ITEMS.length;
 
   const handleSlideNext = useCallback(() => {
@@ -646,7 +655,8 @@ export default function HeroScrollExperience() {
           name: "Standard Pack",
           volume: "6L / Single",
         },
-        price: item.priceNum || 19.99,
+        price: item.priceNum || cleanBean.price,
+        variantId: item.id === "clean-bean-original" ? cleanBean.variantId : undefined,
         image: item.image,
         quantity: 1,
       },
@@ -656,8 +666,8 @@ export default function HeroScrollExperience() {
 
   const handleProductDetailsAddToCart = () => {
     const cleanBeanItem =
-      ORYZO_ITEMS.find((item) => item.id === "clean-bean-original") ||
-      ORYZO_ITEMS[ORYZO_ITEMS.length - 1];
+      liveItems.find((item) => item.id === "clean-bean-original") ||
+      liveItems[liveItems.length - 1];
     handleQuickAdd(cleanBeanItem);
   };
 

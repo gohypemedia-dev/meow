@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
+import { useCleanBean, formatPrice } from "@/lib/useCleanBean";
 
 export default function CartDrawer() {
   const {
@@ -14,6 +15,8 @@ export default function CartDrawer() {
     addToCart,
     clearCart,
   } = useCart();
+  const cleanBean = useCleanBean();
+  const fmt = (n: number) => formatPrice(n, cleanBean.currencyCode);
 
   const [plan, setPlan] = useState<"onetime" | "yearly">("onetime");
   const [quantity, setQuantity] = useState<number>(1);
@@ -44,8 +47,9 @@ export default function CartDrawer() {
           productId: "clean-bean-original",
           name: "Clean Bean Tofu Cat Litter",
           size: { id: "standard", name: "7L Extra Free Pack", volume: "7L" },
-          price: 19.99,
-          image: "/showcase/meow/IMG_7598.PNG",
+          price: cleanBean.price,
+          variantId: cleanBean.variantId,
+          image: cleanBean.image,
           quantity: nextQty,
           isSubscription: false,
         },
@@ -63,8 +67,9 @@ export default function CartDrawer() {
           productId: "clean-bean-original",
           name: "Clean Bean Tofu Litter (Yearly Plan)",
           size: { id: "standard", name: "7L Monthly Auto-Refill", volume: "7L x 12" },
-          price: 15.99,
-          image: "/showcase/meow/IMG_7598.PNG",
+          price: cleanBean.subscribePrice,
+          variantId: cleanBean.variantId,
+          image: cleanBean.image,
           quantity: 1,
           isSubscription: true,
           subscriptionInterval: "Monthly",
@@ -77,8 +82,9 @@ export default function CartDrawer() {
           productId: "clean-bean-original",
           name: "Clean Bean Tofu Cat Litter",
           size: { id: "standard", name: "7L Extra Free Pack", volume: "7L" },
-          price: 19.99,
-          image: "/showcase/meow/IMG_7598.PNG",
+          price: cleanBean.price,
+          variantId: cleanBean.variantId,
+          image: cleanBean.image,
           quantity: quantity,
           isSubscription: false,
         },
@@ -101,6 +107,7 @@ export default function CartDrawer() {
           isSubscription: plan === "yearly",
           subscriptionInterval: plan === "yearly" ? "Monthly" : undefined,
           size: { id: "standard", name: "7L Extra Free Pack" },
+          variantId: cleanBean.variantId,
         },
       ];
 
@@ -124,7 +131,7 @@ export default function CartDrawer() {
     }
   };
 
-  const total = (19.99 * quantity).toFixed(2);
+  const total = fmt(cleanBean.price * quantity);
 
   const Radio = ({ active }: { active: boolean }) => (
     <div
@@ -258,8 +265,8 @@ export default function CartDrawer() {
                         </div>
                       </div>
                       <div className="text-right shrink-0">
-                        <div className="text-[14px] font-semibold text-black">${total}</div>
-                        <div className="text-[10px] text-black/50">$19.99 / bag</div>
+                        <div className="text-[14px] font-semibold text-black">{total}</div>
+                        <div className="text-[10px] text-black/50">{fmt(cleanBean.price)} / bag</div>
                       </div>
                     </div>
                   </div>
@@ -267,7 +274,7 @@ export default function CartDrawer() {
                   {/* Yearly Plan */}
                   <div onClick={() => handleSelectPlan("yearly")} className={`${rowClass(plan === "yearly")} mt-4 sm:mt-5`}>
                     <div className="absolute -top-[11px] left-3 bg-black text-white text-[11px] font-bold px-2.5 py-[2px] rounded-full shadow-md">
-                      Save 20%
+                      Save {Math.max(0, Math.round((1 - cleanBean.subscribePrice / cleanBean.price) * 100))}%
                     </div>
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
@@ -276,9 +283,9 @@ export default function CartDrawer() {
                       </div>
                       <div className="text-right shrink-0">
                         <div className="text-[14px] font-semibold text-black">
-                          $15.99 <span className="font-normal text-black/70">/ month</span>
+                          {fmt(cleanBean.subscribePrice)} <span className="font-normal text-black/70">/ month</span>
                         </div>
-                        <div className="text-[10px] text-black/50">just $191.88 / year</div>
+                        <div className="text-[10px] text-black/50">just {fmt(cleanBean.subscribePrice * 12)} / year</div>
                       </div>
                     </div>
                   </div>
@@ -296,7 +303,7 @@ export default function CartDrawer() {
                           Processing...
                         </span>
                       ) : plan === "onetime" ? (
-                        `Checkout • $${total}`
+                        `Checkout • ${total}`
                       ) : (
                         "Subscribe"
                       )}

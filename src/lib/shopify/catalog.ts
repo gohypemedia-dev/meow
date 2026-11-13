@@ -366,11 +366,21 @@ export function buildCatalog(data: CatalogQueryResult): ShopifyCatalog {
     const available = shopifyProd.variants.nodes.some((v) => v.availableForSale);
     const lowestPrice = Math.min(...sizes.map((s) => s.price));
 
+    // Shopify's description is the source of truth whenever the merchant has written one.
+    const shopifyDescriptionText = (shopifyProd.descriptionHtml || "")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/\s+/g, " ")
+      .trim();
+
     enrichedProducts.push({
       ...baseProduct,
       shopifyId: shopifyProd.id,
       handle: shopifyProd.handle,
       name: shopifyProd.title || baseProduct.name,
+      description: shopifyDescriptionText || baseProduct.description,
+      longDescription: shopifyProd.descriptionHtml || baseProduct.longDescription,
       basePrice: lowestPrice > 0 ? lowestPrice : baseProduct.basePrice,
       image: shopifyProd.featuredImage?.url || baseProduct.image,
       flavors: flavors && flavors.length > 0 ? flavors : undefined,

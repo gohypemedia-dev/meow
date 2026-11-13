@@ -7,44 +7,22 @@ import { motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import CartIcon from "@/components/CartIcon";
 import ProfileMenu from "@/components/ProfileMenu";
+import { useCleanBean, formatPrice } from "@/lib/useCleanBean";
 
 export default function ProductPage() {
   const { totalItems, openCart, addToCart } = useCart();
   const [quantity, setQuantity] = useState(1);
   const [addedAnimation, setAddedAnimation] = useState(false);
-  const [productData, setProductData] = useState<{
-    price: number;
-    title: string;
-    description: string;
-    variantId?: string;
-  }>({
-    price: 19.99,
-    title: "CLEAN BEAN",
-    description:
-      "100% natural tofu cat litter made from food-grade soybean fiber. Fast clumping, 99.9% dust-free, and flushable.",
-  });
+  // Title, description, price and variant come live from Shopify.
+  const cleanBean = useCleanBean();
+  const fmt = (n: number) => formatPrice(n, cleanBean.currencyCode);
+  const productData = {
+    title: cleanBean.name.toUpperCase(),
+    description: cleanBean.description,
+    variantId: cleanBean.variantId,
+  };
 
-  React.useEffect(() => {
-    fetch("/api/catalog?slug=clean-bean")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data?.product) {
-          const p = data.product;
-          const firstSize = p.sizes?.[0];
-          setProductData({
-            price: firstSize?.price ?? p.basePrice ?? 19.99,
-            title: p.name?.toUpperCase() ?? "CLEAN BEAN",
-            description:
-              p.description ??
-              "100% natural tofu cat litter made from food-grade soybean fiber. Fast clumping, 99.9% dust-free, and flushable.",
-            variantId: firstSize?.variantId,
-          });
-        }
-      })
-      .catch((err) => console.warn("Using local product defaults:", err));
-  }, []);
-
-  const price = productData.price;
+  const price = cleanBean.price;
   const totalPrice = price * quantity;
 
   const handleAddToCart = () => {
@@ -68,7 +46,7 @@ export default function ProductPage() {
         },
         price: price,
         variantId: productData.variantId,
-        image: "/showcase/meow/IMG_7598.PNG",
+        image: cleanBean.image,
         quantity: quantity,
       },
       true
@@ -156,8 +134,15 @@ export default function ProductPage() {
                 <span className="text-[10px] font-mono uppercase tracking-widest text-white/50">
                   Price
                 </span>
-                <span className="text-2xl sm:text-3xl md:text-4xl font-heading font-black text-white tracking-tight">
-                  ${price.toFixed(2)}
+                <span className="flex items-baseline gap-2">
+                  <span className="text-2xl sm:text-3xl md:text-4xl font-heading font-black text-white tracking-tight">
+                    {fmt(price)}
+                  </span>
+                  {cleanBean.compareAtPrice && (
+                    <span className="text-sm sm:text-base font-heading font-bold text-white/45 line-through">
+                      {fmt(cleanBean.compareAtPrice)}
+                    </span>
+                  )}
                 </span>
               </div>
 
@@ -196,7 +181,7 @@ export default function ProductPage() {
               <span>
                 {addedAnimation
                   ? "Added to Cart! 🐾"
-                  : `Add to Cart • $${totalPrice.toFixed(2)}`}
+                  : `Add to Cart • ${fmt(totalPrice)}`}
               </span>
             </button>
 

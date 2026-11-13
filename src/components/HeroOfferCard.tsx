@@ -3,6 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useCart } from "@/context/CartContext";
+import { useCleanBean, formatPrice } from "@/lib/useCleanBean";
 
 interface HeroOfferCardProps {
   onSubscribe?: () => void;
@@ -10,6 +11,10 @@ interface HeroOfferCardProps {
 
 export default function HeroOfferCard({ onSubscribe }: HeroOfferCardProps) {
   const { addToCart } = useCart();
+  // MRP and subscription price come live from Shopify (compare-at / variant price, selling plan).
+  const cleanBean = useCleanBean();
+  const mrp = cleanBean.compareAtPrice ?? cleanBean.price;
+  const fmt = (n: number) => formatPrice(n, cleanBean.currencyCode);
 
   const handleSubscribe = () => {
     if (onSubscribe) {
@@ -19,8 +24,9 @@ export default function HeroOfferCard({ onSubscribe }: HeroOfferCardProps) {
         {
           productId: "clean-bean-annual-sub",
           name: "Clean Bean Tofu Litter - Annual Plan",
-          price: 590,
-          originalPrice: 860,
+          price: cleanBean.subscribePrice,
+          originalPrice: mrp,
+          variantId: cleanBean.variantId,
           size: { id: "7l", name: "(6+1)L", volume: "7L" },
           image: "/product-bag.png",
           quantity: 1,
@@ -102,7 +108,7 @@ export default function HeroOfferCard({ onSubscribe }: HeroOfferCardProps) {
           <div className="flex-1 flex flex-col items-center justify-center">
             <div className="relative inline-block">
               <span className="font-heading font-black text-xl sm:text-2xl md:text-[28px] text-black leading-none">
-                ₹860
+                {fmt(mrp)}
               </span>
               {/* Bold Red Strikethrough Slash */}
               <div className="absolute inset-x-[-5px] top-1/2 -translate-y-1/2 h-[2.5px] sm:h-[3px] bg-[#E02424] rounded-full rotate-[-4deg]" />
@@ -123,7 +129,7 @@ export default function HeroOfferCard({ onSubscribe }: HeroOfferCardProps) {
             className="flex-1 max-w-[130px] sm:max-w-[150px] bg-[#3FA8EA] hover:bg-[#3298D8] text-white rounded-2xl sm:rounded-3xl py-1.5 sm:py-2 px-3 sm:px-4 shadow-sm flex flex-col items-center justify-center cursor-pointer transition-colors"
           >
             <span className="font-heading font-black text-xl sm:text-2xl md:text-[26px] leading-none text-white tracking-tight">
-              ₹590
+              {fmt(cleanBean.subscribePrice)}
             </span>
             <span className="font-heading font-bold text-[9px] sm:text-[11px] text-white/95 leading-tight mt-0.5">
               per pack
