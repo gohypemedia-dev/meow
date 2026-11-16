@@ -1307,7 +1307,7 @@ export default function HeroScrollExperience() {
                       delay: stage === "details" ? 0.78 : 0,
                       ease: [0.16, 1, 0.3, 1],
                     }}
-                    className="text-[10.5px] sm:text-xs md:text-base text-white/80 font-sans font-normal leading-snug mb-1.5 sm:mb-3 line-clamp-2 sm:line-clamp-none"
+                    className="text-[10.5px] sm:text-xs md:text-base text-white/80 font-sans font-normal leading-snug mb-1.5 sm:mb-3"
                   >
                     {currentItem.id === "clean-bean-original"
                       ? cleanBean.description
