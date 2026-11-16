@@ -238,11 +238,16 @@ button {
   }
 }
 
-/* Hero offer banner on phones: as wide as the screen allows, but never so tall that it
-   reaches the product bag. The bag's top sits 66vw above the viewport bottom and the banner
-   starts at most 230px from the top, so its height is capped at (100dvh - 66vw - 240px);
-   the banner image is 547x371, so width = height * 1.474. */
-@media (max-width: 767px) {
+/* Hero offer banner on phones: edge to edge, but never so tall that it reaches the
+   product bag. The bag's top sits ~62-66vw above the viewport bottom and on phones the banner
+   starts 168px from the top, so its height is capped at (100dvh - 66vw - 178px);
+   the banner is 547x371, so width = height * 1.474. On most phones this is the full width. */
+@media (max-width: 639px) {
+  .hero-offer-slot > * {
+    max-width: min(100%, calc((100dvh - 66vw - 178px) * 1.474));
+  }
+}
+@media (min-width: 640px) and (max-width: 767px) {
   .hero-offer-slot > * {
     max-width: min(100%, calc((100dvh - 66vw - 240px) * 1.474));
   }

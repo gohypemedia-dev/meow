@@ -6,7 +6,6 @@ import Image from "next/image";
 // The three little "surprise" strokes beside the cat's head live in their own image so they can
 // sway gently while the cat and hills stay perfectly still. Boxes are % of the artwork container.
 const MARKS_DESKTOP = { left: 53.409, top: 52.816, width: 3.947, height: 10.521 };
-const MARKS_MOBILE = { left: 49.841, top: 66.806, width: 6.589, height: 5.801 };
 
 function SurpriseMarks({ src, box }: { src: string; box: typeof MARKS_DESKTOP }) {
   return (
@@ -130,7 +129,6 @@ export default function HeroBackground() {
             className="object-contain"
             priority
           />
-          <SurpriseMarks src="/hero-marks-mobile.png" box={MARKS_MOBILE} />
           <CatEyes art={EYES_MOBILE} id="cat-m" />
         </div>
       </div>

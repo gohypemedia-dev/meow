@@ -940,7 +940,7 @@ export default function HeroScrollExperience() {
           opacity: heroBannerOpacity,
           y: heroBannerY,
         }}
-        className={`absolute z-35 hero-offer-slot left-1/2 -translate-x-1/2 top-[210px] xs:top-[222px] sm:top-[230px] md:top-[17vh] w-full flex justify-center px-2 sm:px-4 pointer-events-none ${
+        className={`absolute z-35 hero-offer-slot left-1/2 -translate-x-1/2 top-[168px] sm:top-[230px] md:top-[17vh] w-full flex justify-center px-2 sm:px-4 pointer-events-none ${
           introPhase === "hero" ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
@@ -1002,11 +1002,6 @@ export default function HeroScrollExperience() {
               priority
             />
           </motion.div>
-
-          {/* Floor contact shadow for bag in hero mode */}
-          {introPhase === "hero" && (
-            <div className="absolute -bottom-2.5 inset-x-3 h-3.5 bg-black/35 blur-sm rounded-full pointer-events-none z-0" />
-          )}
         </motion.div>
       </motion.div>
 
@@ -1370,6 +1365,11 @@ export default function HeroScrollExperience() {
                     <span className="text-[26px] sm:text-[40px] md:text-[48px] leading-none font-heading font-black text-white tracking-tight">
                       {currentItem.price}
                     </span>
+                    {currentItem.id === "clean-bean-original" && (
+                      <span className="mt-1 text-[9px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-[#A9D3F4]">
+                        Net Wt. 2.75 kg
+                      </span>
+                    )}
                   </div>
 
                   <button

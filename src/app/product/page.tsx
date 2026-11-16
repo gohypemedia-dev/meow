@@ -144,6 +144,9 @@ export default function ProductPage() {
                     </span>
                   )}
                 </span>
+                <span className="mt-1 text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-[#A9D3F4]">
+                  Net Wt. 2.75 kg
+                </span>
               </div>
 
               {/* Quantity Counter */}
