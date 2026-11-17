@@ -22,7 +22,8 @@ export default function ProfileMenu({
     "wr7cuz-21.myshopify.com";
 
   const domain = rawDomain.replace(/^https?:\/\//, "").replace(/\/.*$/, "");
-  const loginUrl = `https://${domain}/account/login`;
+  // Using direct profile endpoint with return_to parameter so Shopify opens the Profile tab
+  const loginUrl = `https://${domain}/account?return_to=%2Faccount%2Fprofile`;
 
   const isFrameless = theme === "frameless";
   const isBrutalist = theme === "brutalist";
