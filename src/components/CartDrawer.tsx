@@ -235,36 +235,33 @@ export default function CartDrawer() {
                 {/* 2. White Blur Content Area */}
                 <div className="shrink-0 min-[460px]:flex-1 -mt-px bg-white/90 backdrop-blur-xl px-4 min-[380px]:px-5 pb-[max(1rem,env(safe-area-inset-bottom))] sm:pb-6 flex flex-col">
                   
-                  {/* Quantity & Product Row */}
+                  {/* Quantity & Pricing Row */}
                   <div className="w-full rounded-[20px] bg-black/[0.03] border border-black/10 p-3 sm:p-3.5 mt-3 mb-3">
                     <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <div className="text-[14px] font-semibold text-black tracking-tight">One-Time</div>
-                        <div className="flex items-center gap-2 mt-1.5">
-                          <div className="flex items-center bg-white border border-black/15 rounded-full shadow-xs">
-                            <button
-                              onClick={() => handleUpdateQty(-1)}
-                              disabled={quantity <= 1}
-                              className="w-7 h-7 sm:w-6.5 sm:h-6.5 rounded-full flex items-center justify-center text-black/70 hover:text-black hover:bg-black/5 active:bg-black/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold text-sm cursor-pointer"
-                              aria-label="Decrease quantity"
-                            >
-                              −
-                            </button>
-                            <span className="w-5 text-center font-bold text-xs text-black select-none">
-                              {quantity}
-                            </span>
-                            <button
-                              onClick={() => handleUpdateQty(1)}
-                              className="w-7 h-7 sm:w-6.5 sm:h-6.5 rounded-full flex items-center justify-center text-black/70 hover:text-black hover:bg-black/5 active:bg-black/10 transition-all font-bold text-sm cursor-pointer"
-                              aria-label="Increase quantity"
-                            >
-                              +
-                            </button>
-                          </div>
-                          <span className="text-[11px] font-medium text-black/50">
-                            {quantity === 1 ? "1 bag" : `${quantity} bags`}
+                      <div className="flex items-center gap-2.5">
+                        <div className="flex items-center bg-white border border-black/15 rounded-full shadow-xs">
+                          <button
+                            onClick={() => handleUpdateQty(-1)}
+                            disabled={quantity <= 1}
+                            className="w-7 h-7 sm:w-6.5 sm:h-6.5 rounded-full flex items-center justify-center text-black/70 hover:text-black hover:bg-black/5 active:bg-black/10 disabled:opacity-30 disabled:cursor-not-allowed transition-all font-bold text-sm cursor-pointer"
+                            aria-label="Decrease quantity"
+                          >
+                            −
+                          </button>
+                          <span className="w-5 text-center font-bold text-xs text-black select-none">
+                            {quantity}
                           </span>
+                          <button
+                            onClick={() => handleUpdateQty(1)}
+                            className="w-7 h-7 sm:w-6.5 sm:h-6.5 rounded-full flex items-center justify-center text-black/70 hover:text-black hover:bg-black/5 active:bg-black/10 transition-all font-bold text-sm cursor-pointer"
+                            aria-label="Increase quantity"
+                          >
+                            +
+                          </button>
                         </div>
+                        <span className="text-[12px] font-medium text-black/60">
+                          {quantity === 1 ? "1 bag" : `${quantity} bags`}
+                        </span>
                       </div>
 
                       <div className="text-right shrink-0">
