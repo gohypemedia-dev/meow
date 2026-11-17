@@ -106,7 +106,8 @@ export async function POST(req: Request) {
         const numId = l.merchandiseId.split("/").pop();
         return `${numId}:${l.quantity}`;
       });
-      permalinkUrl = `https://${cleanDomain}/cart/${parts.join(",")}`;
+      const discParam = discountCode ? `?discount=${encodeURIComponent(discountCode)}` : "";
+      permalinkUrl = `https://${cleanDomain}/cart/${parts.join(",")}${discParam}`;
     }
 
     try {
@@ -114,9 +115,14 @@ export async function POST(req: Request) {
       if (!cart.totalQuantity) {
         throw new Error("Shopify returned an empty cart (variant unavailable or out of stock)");
       }
+      let finalCheckoutUrl = cart.checkoutUrl || permalinkUrl;
+      if (discountCode && finalCheckoutUrl && !finalCheckoutUrl.includes("discount=")) {
+        const sep = finalCheckoutUrl.includes("?") ? "&" : "?";
+        finalCheckoutUrl = `${finalCheckoutUrl}${sep}discount=${encodeURIComponent(discountCode)}`;
+      }
       return NextResponse.json({
         success: true,
-        checkoutUrl: cart.checkoutUrl || permalinkUrl,
+        checkoutUrl: finalCheckoutUrl,
         cartId: cart.id,
         totalQuantity: cart.totalQuantity,
       });

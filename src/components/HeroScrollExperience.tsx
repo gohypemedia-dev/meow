@@ -9,6 +9,7 @@ import HeroBackground, { HeroBricks } from "./HeroBackground";
 import HeroOfferBanner from "./HeroOfferBanner";
 import { useCart } from "@/context/CartContext";
 import { useCleanBean, formatPrice } from "@/lib/useCleanBean";
+import { isCouponTag } from "@/lib/coupons";
 import CartIcon from "@/components/CartIcon";
 import ProfileMenu from "@/components/ProfileMenu";
 
@@ -1304,12 +1305,22 @@ export default function HeroScrollExperience() {
                     }}
                     className="text-[10.5px] sm:text-xs md:text-base text-white/80 font-sans font-normal leading-snug mb-1.5 sm:mb-3"
                   >
-                    {currentItem.id === "clean-bean-original"
-                      ? cleanBean.description
-                      : "Official Meow Ganics vintage art poster. High quality archival print on heavy matte paper."}
+                    {currentItem.id === "clean-bean-original" ? (
+                      /ingredients,\s*/i.test(cleanBean.description) ? (
+                        <>
+                          {cleanBean.description.split(/ingredients,\s*/i)[0]}ingredients,
+                          <br />
+                          {cleanBean.description.split(/ingredients,\s*/i)[1]}
+                        </>
+                      ) : (
+                        cleanBean.description
+                      )
+                    ) : (
+                      "Official Meow Ganics vintage art poster. High quality archival print on heavy matte paper."
+                    )}
                   </motion.p>
 
-                  {/* Feature tags (Shopify product tags, or defaults) */}
+                  {/* Feature tags (Shopify product tags, excluding coupon codes) */}
                   {currentItem.id === "clean-bean-original" && (cleanBean.tags?.length ?? 0) > 0 && (
                     <motion.ul
                       initial={{ opacity: 0, y: 12 }}
@@ -1325,7 +1336,7 @@ export default function HeroScrollExperience() {
                       className="flex flex-wrap gap-1 sm:gap-2 mb-1.5 sm:mb-5"
                       aria-label="Product features"
                     >
-                      {cleanBean.tags.map((tag) => (
+                      {cleanBean.tags.filter((tag) => !isCouponTag(tag)).map((tag) => (
                         <li
                           key={tag}
                           className="rounded-full px-2 py-0.5 sm:px-3 sm:py-1 text-[9px] sm:text-xs font-sans font-semibold leading-tight border bg-white/10 border-white/15 text-white/85"
