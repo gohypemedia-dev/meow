@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, animate } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform, animate } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
 import InteractiveCat from "./InteractiveCat";
@@ -127,11 +127,13 @@ export default function HeroScrollExperience() {
 
   // Laptop hero position (>= 1024px): bag locked bottom-left on the floor, sized off viewport
   // width like the background artwork so bag and cat keep the same layout on every laptop.
-  // Bag is 22vw wide, centred at 28vw, bottom edge 3vh above the viewport bottom.
+  // Bag is 22vw wide, centred at 40vw (spans ~29vw-51vw) so it sits just left of the cat's
+  // "surprise" marks (~51.5vw) instead of leaving a wide empty gap. Bottom edge 3vh above the
+  // viewport bottom. Tablets (768-1023px) use different artwork and keep the old 28vw centre.
   const isLaptopView = viewport.width >= 1024;
   const laptopBagBaseWidth = Math.min(viewport.width * 0.19, 280);
   const laptopBagHeight = viewport.width * 0.22 * (1448 / 1086);
-  const laptopHeroX = viewport.width * (0.28 - 0.5);
+  const laptopHeroX = viewport.width * ((isLaptopView ? 0.40 : 0.28) - 0.5);
   const laptopHeroY = viewport.height * 0.47 - laptopBagHeight / 2;
   const laptopHeroScale = laptopBagBaseWidth ? (viewport.width * 0.22) / laptopBagBaseWidth : 0.92;
 
@@ -837,7 +839,7 @@ export default function HeroScrollExperience() {
             alt="Meow Ganics Logo"
             width={1776}
             height={725}
-            className="w-[72vw] xs:w-[74vw] max-w-[315px] sm:max-w-none sm:w-[260px] md:w-[285px] lg:w-[340px] h-auto max-h-[114px] xs:max-h-[126px] sm:max-h-[84px] md:max-h-[92px] lg:max-h-[139px] object-contain object-left transition-transform duration-300 group-hover:scale-105 origin-left drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)]"
+            className="w-[72vw] xs:w-[74vw] max-w-[315px] sm:max-w-none sm:w-[260px] md:w-[285px] lg:w-[420px] h-auto max-h-[114px] xs:max-h-[126px] sm:max-h-[84px] md:max-h-[92px] lg:max-h-[172px] object-contain object-left transition-transform duration-300 group-hover:scale-105 origin-left drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)]"
             priority
           />
         </Link>
@@ -1450,77 +1452,6 @@ export default function HeroScrollExperience() {
             )}
           </motion.div>
 
-          {/* ── Carousel Mini-Headline on Left Center (Visible only in stage === 'carousel') ── */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{
-              opacity: introPhase === "docked" && stage === "carousel" ? 1 : 0,
-              x: introPhase === "docked" && stage === "carousel" ? 0 : -30,
-              pointerEvents: introPhase === "docked" && stage === "carousel" ? "auto" : "none",
-            }}
-            transition={{
-              duration: 0.75,
-              ease: [0.16, 1, 0.3, 1],
-              delay: introPhase === "docked" && stage === "carousel" ? 0.45 : 0,
-            }}
-            className="hidden md:block absolute z-40 shrink-0 max-w-[360px] -translate-y-1/2"
-            style={{
-              left: "max(2.5rem, calc(50% - 540px))",
-              top: "50%",
-            }}
-          >
-            <AnimatePresence mode="wait">
-              {stage === "carousel" && (
-                <motion.div
-                  key={currentItem.id}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.22, ease: "easeOut" }}
-                  className="flex flex-col items-start text-left w-full"
-                >
-                  <h1 className="flex flex-col items-start text-left">
-                    <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-[0.2em] text-brand-black/55 mb-0.5 sm:mb-1">
-                      {currentItem.title1}
-                    </span>
-                    <span className="text-xl sm:text-2xl md:text-3xl font-heading font-black tracking-tight leading-tight text-brand-black">
-                      {currentItem.title2}
-                    </span>
-                  </h1>
-
-                  <div className="flex items-center gap-2.5 sm:gap-3 mt-2 sm:mt-2.5">
-                    <button
-                      onClick={() => {
-                        if (!currentItem.isComingSoon) {
-                          setStage("details");
-                        }
-                      }}
-                      className={`px-4 sm:px-5 py-1.5 sm:py-2 rounded-full font-heading font-black text-xs sm:text-sm hover:scale-105 active:scale-95 transition-all shadow-[0_4px_18px_rgba(0,0,0,0.12)] cursor-pointer ${
-                        currentItem.isComingSoon
-                          ? "bg-black/5 text-brand-black/70 border border-black/20 cursor-default"
-                          : "bg-brand-black text-white"
-                      }`}
-                    >
-                      {currentItem.isComingSoon
-                        ? `${currentItem.comingSoonDrop || "Next Drop"} • Coming Soon`
-                        : `Buy Now • ${currentItem.price}`}
-                    </button>
-
-                    {!currentItem.isComingSoon && (
-                      <button
-                        onClick={() => handleQuickAdd(currentItem)}
-                        className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-black/20 hover:border-black text-brand-black flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer bg-black/5 hover:bg-black/10 backdrop-blur-md shadow-md"
-                        aria-label={`Quick add ${currentItem.flavor}`}
-                      >
-                        <CartIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                      </button>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-
           {/* ── Navigation arrows flanking the box in Carousel mode ── */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -1574,7 +1505,9 @@ export default function HeroScrollExperience() {
           ══════════════════════════════════════════════════════════════════════════════════════ */}
       {/* ── Fixed Center-Bottom Explore Button (Hero Mode) ── */}
       {introPhase === "hero" && (
-        <div className="absolute bottom-[max(0.4rem,env(safe-area-inset-bottom,0px))] sm:bottom-6 md:bottom-8 lg:bottom-3 inset-x-0 mx-auto w-fit z-50 flex items-center justify-center pointer-events-auto">
+        // On laptops the bag sits at ~29-51vw, so the pill is centred under the cat (~72vw) on the
+        // empty white floor instead of the screen centre, where it would cover the bag.
+        <div className="absolute bottom-[max(0.4rem,env(safe-area-inset-bottom,0px))] sm:bottom-6 md:bottom-8 lg:bottom-3 inset-x-0 lg:right-auto lg:left-[72vw] lg:-translate-x-1/2 mx-auto w-fit z-50 flex items-center justify-center pointer-events-auto">
           <button
             onClick={handleNext}
             className="flex items-center gap-1.5 sm:gap-2 text-brand-black font-heading font-bold cursor-pointer hover:scale-105 active:scale-95 transition-all bg-brand-white/90 hover:bg-brand-white backdrop-blur-md px-3 sm:px-5 lg:px-3.5 py-1 sm:py-2 lg:py-1 rounded-full border border-brand-black/20 shadow-md text-[10.5px] sm:text-sm lg:text-xs"
