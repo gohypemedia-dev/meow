@@ -241,11 +241,12 @@ button {
 
 /* Hero offer banner on phones: edge to edge, but never so tall that it reaches the
    product bag. The bag's top sits ~62-66vw above the viewport bottom and on phones the banner
-   starts 168px from the top, so its height is capped at (100dvh - 66vw - 178px);
+   starts 192px from the top (below the logo and the profile/cart icons), so its height is
+   capped at (100dvh - 66vw - 202px);
    the banner is 547x371, so width = height * 1.474. On most phones this is the full width. */
 @media (max-width: 639px) {
   .hero-offer-slot > * {
-    max-width: min(100%, calc((100dvh - 66vw - 178px) * 1.474));
+    max-width: min(100%, calc((100dvh - 66vw - 202px) * 1.474));
   }
 }
 @media (min-width: 640px) and (max-width: 767px) {

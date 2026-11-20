@@ -133,7 +133,7 @@ export default function HeroScrollExperience() {
   // Tablets (768-1023px) use different artwork and keep the old 22vw bag at a 28vw centre.
   const isLaptopView = viewport.width >= 1024;
   const BAG_RATIO = 1448 / 1086;
-  const laptopLogoHeight = Math.min(viewport.width * 0.36, 540) * (725 / 1776);
+  const laptopLogoHeight = Math.min(viewport.width * 0.42, 640) * (725 / 1776);
   const laptopNavBottom = laptopLogoHeight + 12 + 16; // logo + nav top padding + breathing room
   const laptopBagWidth = isLaptopView
     ? Math.min(viewport.width * 0.24, (viewport.height * 0.97 - laptopNavBottom) / BAG_RATIO)
@@ -844,7 +844,7 @@ export default function HeroScrollExperience() {
             alt="Meow Ganics Logo"
             width={1776}
             height={725}
-            className="w-[72vw] xs:w-[74vw] max-w-[315px] sm:max-w-none sm:w-[260px] md:w-[285px] lg:w-[36vw] lg:max-w-[540px] h-auto max-h-[114px] xs:max-h-[126px] sm:max-h-[84px] md:max-h-[92px] lg:max-h-[221px] object-contain object-left transition-transform duration-300 group-hover:scale-105 origin-left drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)]"
+            className="w-[86vw] max-w-[370px] sm:max-w-none sm:w-[260px] md:w-[285px] lg:w-[42vw] lg:max-w-[640px] h-auto max-h-[151px] sm:max-h-[84px] md:max-h-[92px] lg:max-h-[262px] object-contain object-left transition-transform duration-300 group-hover:scale-105 origin-left drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)]"
             priority
           />
         </Link>
@@ -910,7 +910,7 @@ export default function HeroScrollExperience() {
 
       {/* ── Mobile Action Icons in Right Corner (Hero View: md:hidden) ── */}
       {true && (
-        <div className="md:hidden fixed top-[130px] xs:top-[136px] sm:top-[144px] right-4 xs:right-6 z-40 flex items-center gap-0 pointer-events-auto">
+        <div className="md:hidden fixed top-[152px] sm:top-[144px] right-4 xs:right-6 z-40 flex items-center gap-0 pointer-events-auto">
           {/* Left Red Circle: Cat Symbol Profile Menu (Frameless, No Circle Container) */}
           <ProfileMenu
             theme="frameless"
@@ -948,7 +948,7 @@ export default function HeroScrollExperience() {
           opacity: heroBannerOpacity,
           y: heroBannerY,
         }}
-        className={`absolute z-35 hero-offer-slot left-1/2 -translate-x-1/2 top-[168px] sm:top-[230px] md:top-[17vh] w-full flex justify-center px-2 sm:px-4 pointer-events-none ${
+        className={`absolute z-35 hero-offer-slot left-1/2 -translate-x-1/2 top-[192px] sm:top-[230px] md:top-[17vh] w-full flex justify-center px-2 sm:px-4 pointer-events-none ${
           introPhase === "hero" ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
@@ -1510,9 +1510,10 @@ export default function HeroScrollExperience() {
           ══════════════════════════════════════════════════════════════════════════════════════ */}
       {/* ── Fixed Center-Bottom Explore Button (Hero Mode) ── */}
       {introPhase === "hero" && (
-        // On laptops the bag sits at ~29-51vw, so the pill is centred under the cat (~72vw) on the
-        // empty white floor instead of the screen centre, where it would cover the bag.
-        <div className="absolute bottom-[max(0.4rem,env(safe-area-inset-bottom,0px))] sm:bottom-6 md:bottom-8 lg:bottom-3 inset-x-0 lg:right-auto lg:left-[72vw] lg:-translate-x-1/2 mx-auto w-fit z-50 flex items-center justify-center pointer-events-auto">
+        // On laptops the bag sits at ~20-44.5vw, so the pill is centred under the cat (66.5vw, the
+        // same centre as the cat artwork and the offer banner) on the empty white floor instead of
+        // the screen centre, where it would cover the bag.
+        <div className="absolute bottom-[max(0.4rem,env(safe-area-inset-bottom,0px))] sm:bottom-6 md:bottom-8 lg:bottom-3 inset-x-0 lg:right-auto lg:left-[66.5vw] lg:-translate-x-1/2 mx-auto w-fit z-50 flex items-center justify-center pointer-events-auto">
           <button
             onClick={handleNext}
             className="flex items-center gap-1.5 sm:gap-2 text-brand-black font-heading font-bold cursor-pointer hover:scale-105 active:scale-95 transition-all bg-brand-white/90 hover:bg-brand-white backdrop-blur-md px-3 sm:px-5 lg:px-3.5 py-1 sm:py-2 lg:py-1 rounded-full border border-brand-black/20 shadow-md text-[10.5px] sm:text-sm lg:text-xs"
