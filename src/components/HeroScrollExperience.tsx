@@ -127,21 +127,23 @@ export default function HeroScrollExperience() {
 
   // Laptop hero position (>= 1024px): bag locked on the floor, sized off viewport width like the
   // background artwork so bag and cat keep the same layout on every laptop.
-  // Bag is up to 24vw wide with its right edge at ~44.5vw, just left of the cat, so the bag + cat
-  // group (~20vw-81vw) is centred on the screen. On short screens the bag shrinks so its top
-  // always stays below the navbar logo. Bottom edge 3vh above the viewport bottom.
-  // Tablets (768-1023px) use different artwork and keep the old 22vw bag at a 28vw centre.
+  // Bag is up to 28vw wide with its right edge at 46.5vw, just left of the cat (~53-80vw, see
+  // HeroBackground), so the bag + cat group (~18.5-80vw) is centred on the screen. On short
+  // screens the bag shrinks so its top always stays below the navbar logo. Bottom edge 3vh above
+  // the viewport bottom. Tablets (768-1023px) use different artwork and keep the old 22vw bag.
   const isLaptopView = viewport.width >= 1024;
   const BAG_RATIO = 1448 / 1086;
-  const laptopLogoHeight = Math.min(viewport.width * 0.42, 640) * (725 / 1776);
+  // Logo is capped at (50vw - 260px) so it always ends before the 370px carousel card in the centre
+  // (card left edge = 50vw - 185px, minus the 48px nav padding and a small gap).
+  const laptopLogoHeight = Math.max(Math.min(viewport.width * 0.30, viewport.width * 0.5 - 260, 480), 0) * (725 / 1776);
   const laptopNavBottom = laptopLogoHeight + 12 + 16; // logo + nav top padding + breathing room
   const laptopBagWidth = isLaptopView
-    ? Math.min(viewport.width * 0.24, (viewport.height * 0.97 - laptopNavBottom) / BAG_RATIO)
+    ? Math.min(viewport.width * 0.28, (viewport.height * 0.97 - laptopNavBottom) / BAG_RATIO)
     : viewport.width * 0.22;
   const laptopBagBaseWidth = Math.min(viewport.width * 0.19, 280);
   const laptopBagHeight = laptopBagWidth * BAG_RATIO;
   const laptopHeroX = isLaptopView
-    ? viewport.width * 0.445 - laptopBagWidth / 2 - viewport.width * 0.5
+    ? viewport.width * 0.465 - laptopBagWidth / 2 - viewport.width * 0.5
     : viewport.width * (0.28 - 0.5);
   const laptopHeroY = viewport.height * 0.47 - laptopBagHeight / 2;
   const laptopHeroScale = laptopBagBaseWidth ? laptopBagWidth / laptopBagBaseWidth : 0.92;
@@ -844,7 +846,7 @@ export default function HeroScrollExperience() {
             alt="Meow Ganics Logo"
             width={1776}
             height={725}
-            className="w-[86vw] max-w-[370px] sm:max-w-none sm:w-[260px] md:w-[285px] lg:w-[42vw] lg:max-w-[640px] h-auto max-h-[151px] sm:max-h-[84px] md:max-h-[92px] lg:max-h-[262px] object-contain object-left transition-transform duration-300 group-hover:scale-105 origin-left drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)]"
+            className="w-[86vw] max-w-[370px] sm:max-w-none sm:w-[260px] md:w-[285px] lg:w-[min(30vw,calc(50vw_-_260px))] lg:max-w-[480px] h-auto max-h-[151px] sm:max-h-[84px] md:max-h-[92px] lg:max-h-[188px] object-contain object-left transition-transform duration-300 group-hover:scale-105 origin-left drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)]"
             priority
           />
         </Link>
@@ -1236,14 +1238,20 @@ export default function HeroScrollExperience() {
                   delay: stage === "details" ? 0.35 : 0,
                   ease: [0.16, 1, 0.3, 1],
                 }}
+                // Laptop/desktop: the panel is centred vertically in the space BELOW the navbar logo
+                // (top = logo bottom + 16px, bottom = 24px, height fit-content + auto margins), so it
+                // never slides up under the logo on shorter screens.
                 style={{
                   left: isMobile ? "50%" : "max(2.5rem, calc(50% - 580px))",
-                  bottom: isMobile ? "calc(1.25rem + env(safe-area-inset-bottom, 0px))" : "auto",
-                  top: isMobile ? "auto" : "calc(50% + 52px)",
+                  bottom: isMobile ? "calc(1.25rem + env(safe-area-inset-bottom, 0px))" : "24px",
+                  top: isMobile ? "auto" : `${Math.round(Math.max(96, laptopLogoHeight + 12)) + 16}px`,
+                  height: isMobile ? undefined : "fit-content",
+                  marginTop: isMobile ? undefined : "auto",
+                  marginBottom: isMobile ? undefined : "auto",
                   position: "absolute",
                   zIndex: 45,
                 }}
-                className={`-translate-x-1/2 md:translate-x-0 md:-translate-y-1/2 w-[calc(100vw-2.5rem)] max-w-[340px] sm:max-w-[420px] lg:max-w-[460px] xl:max-w-[480px] p-4.5 sm:p-7 md:p-8 shrink-0 flex flex-col justify-between ${
+                className={`-translate-x-1/2 md:translate-x-0 md:max-lg:-translate-y-1/2 w-[calc(100vw-2.5rem)] max-w-[340px] sm:max-w-[420px] lg:max-w-[460px] xl:max-w-[480px] p-4.5 sm:p-7 md:p-8 shrink-0 flex flex-col justify-between ${
                   stage !== "details" ? "pointer-events-none" : ""
                 }`}
               >
@@ -1510,7 +1518,7 @@ export default function HeroScrollExperience() {
           ══════════════════════════════════════════════════════════════════════════════════════ */}
       {/* ── Fixed Center-Bottom Explore Button (Hero Mode) ── */}
       {introPhase === "hero" && (
-        // On laptops the bag sits at ~20-44.5vw, so the pill is centred under the cat (66.5vw, the
+        // On laptops the bag sits at ~18.5-46.5vw, so the pill is centred under the cat (66.5vw, the
         // same centre as the cat artwork and the offer banner) on the empty white floor instead of
         // the screen centre, where it would cover the bag.
         <div className="absolute bottom-[max(0.4rem,env(safe-area-inset-bottom,0px))] sm:bottom-6 md:bottom-8 lg:bottom-3 inset-x-0 lg:right-auto lg:left-[66.5vw] lg:-translate-x-1/2 mx-auto w-fit z-50 flex items-center justify-center pointer-events-auto">

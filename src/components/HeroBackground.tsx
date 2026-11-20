@@ -113,24 +113,24 @@ export default function HeroBackground() {
       </div>
 
       {/* Laptop view (>= lg: 1024px): artwork scaled off viewport width so the cat stays locked
-          at ~66vw (bag + cat centred as a group) with its paws ~12vh above the bottom edge on every laptop.
+          at ~67vw (bag + cat centred as a group) with its paws ~12vh above the bottom edge on every laptop.
           Artwork is 1672x941 and the cat's paws sit at y=800 (141px above the image bottom). */}
       <div
         className="hidden lg:block absolute pointer-events-none z-10"
         style={{
-          // 145vw wide (was 160vw); left keeps the cat centred at ~66.5vw (cat centre is 66.875%
-          // across the artwork): 66.5 - 0.66875 * 145 = -30.5vw.
-          width: "145vw",
+          // 130vw wide; left keeps the cat centred at ~67vw (cat centre is 66.875% across the
+          // artwork): 67 - 0.66875 * 130 = -20vw. The cat itself spans ~53-80vw.
+          width: "130vw",
           aspectRatio: "1672 / 941",
-          left: "-30.5vw",
-          bottom: "calc(12vh - 145vw * 141 / 1672)",
+          left: "-20vw",
+          bottom: "calc(12vh - 130vw * 141 / 1672)",
         }}
       >
         <Image
           src="/hero-cat-hills-v2.png"
           alt="Meow Ganics Litter Hills & Peeking Cat"
           fill
-          sizes="145vw"
+          sizes="130vw"
           className="object-contain"
           priority
         />
