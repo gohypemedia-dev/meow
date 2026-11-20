@@ -201,8 +201,8 @@ button {
 }
 
 
-/* Hero offer banner on laptop/desktop: sits on the peeking cat's head, its bottom edge resting on
-   the ear tips. The cat art is 130vw wide, left -20vw, anchored 12vh from the bottom. Measured
+/* Hero offer banner on laptop/desktop: floats above the peeking cat's head, its bottom edge
+   ~4vh above the ear tips. The cat art is 130vw wide, left -20vw, anchored 12vh from the bottom. Measured
    from the artwork: cat centred at ~66.3vw, ear tips at ~56vw and ~76.5vw, ~(12vh + 18vw) above
    the viewport bottom. Banner is centred on the cat at 66.5vw, up to 36.5vw wide (~48.25-84.75vw:
    right of the bag and logo, left of the profile/cart icons). Its height may use the space up to ~24px from the top. */
@@ -210,8 +210,8 @@ button {
   .hero-offer-slot {
     left: 66.5vw;
     top: auto;
-    bottom: calc(12vh + 18vw);
-    width: min(36.5vw, 900px, calc((88vh - 18vw - 24px) * 1.474));
+    bottom: calc(16vh + 18vw);
+    width: min(36.5vw, 900px, calc((84vh - 18vw - 24px) * 1.474));
     padding-left: 0;
     padding-right: 0;
   }

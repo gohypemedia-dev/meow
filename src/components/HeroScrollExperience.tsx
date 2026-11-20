@@ -127,9 +127,9 @@ export default function HeroScrollExperience() {
 
   // Laptop hero position (>= 1024px): bag locked on the floor, sized off viewport width like the
   // background artwork so bag and cat keep the same layout on every laptop.
-  // Bag is up to 28vw wide with its right edge at 48vw, just left of the cat (~53-80vw, see
-  // HeroBackground), so the bag + cat group (~20-80vw) is centred on the screen. On short
-  // screens the bag shrinks so its top always stays below the navbar logo. Bottom edge 7vh above
+  // Bag is up to 31vw wide with its right edge at 47.5vw, just left of the cat (~53-80vw, see
+  // HeroBackground), so the bag + cat group (~16.5-80vw) is centred on the screen. On short
+  // screens the bag shrinks so its top always stays below the navbar logo. Bottom edge 2vh above
   // the viewport bottom (3vh on tablets). Tablets (768-1023px) use different artwork and keep the old 22vw bag.
   const isLaptopView = viewport.width >= 1024;
   const BAG_RATIO = 1448 / 1086;
@@ -138,14 +138,14 @@ export default function HeroScrollExperience() {
   const laptopLogoHeight = Math.max(Math.min(viewport.width * 0.30, viewport.width * 0.5 - 260, 480), 0) * (725 / 1776);
   const laptopNavBottom = laptopLogoHeight + 12 + 16; // logo + nav top padding + breathing room
   const laptopBagWidth = isLaptopView
-    ? Math.min(viewport.width * 0.28, (viewport.height * 0.93 - laptopNavBottom) / BAG_RATIO)
+    ? Math.min(viewport.width * 0.31, (viewport.height * 0.98 - laptopNavBottom) / BAG_RATIO)
     : viewport.width * 0.22;
   const laptopBagBaseWidth = Math.min(viewport.width * 0.19, 280);
   const laptopBagHeight = laptopBagWidth * BAG_RATIO;
   const laptopHeroX = isLaptopView
-    ? viewport.width * 0.48 - laptopBagWidth / 2 - viewport.width * 0.5
+    ? viewport.width * 0.475 - laptopBagWidth / 2 - viewport.width * 0.5
     : viewport.width * (0.28 - 0.5);
-  const laptopHeroY = viewport.height * (isLaptopView ? 0.43 : 0.47) - laptopBagHeight / 2;
+  const laptopHeroY = viewport.height * (isLaptopView ? 0.48 : 0.47) - laptopBagHeight / 2;
   const laptopHeroScale = laptopBagBaseWidth ? laptopBagWidth / laptopBagBaseWidth : 0.92;
 
   // Responsive Carousel Card Dimensions (Taller mobile card height matching exact 974 x 1536 aspect ratio)
@@ -851,8 +851,11 @@ export default function HeroScrollExperience() {
           />
         </Link>
 
-        {/* Right Actions: Laptop Header (Desktop/Tablet) or Scrolled Mobile Header */}
-        <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+        {/* Right Actions: Laptop Header (Desktop/Tablet) or Scrolled Mobile Header.
+            On laptops (lg) the profile + cart icons drop just below the logo's bottom edge instead
+            of being centred on the tall logo. Logo height = its width (see the logo classes:
+            min(30vw, 50vw - 260px, 480px)) * 725/1776; + 12px nav padding + 16px gap. */}
+        <div className="flex items-center gap-3 sm:gap-4 shrink-0 lg:absolute lg:right-12 lg:top-[calc(min(30vw,50vw_-_260px,480px)*0.408_+_28px)]">
           {/* Profile Menu with Cat Symbol (Hidden on mobile during hero phase, visible on laptop or when scrolled) */}
           <div className="hidden md:flex">
             <ProfileMenu
@@ -1518,7 +1521,7 @@ export default function HeroScrollExperience() {
           ══════════════════════════════════════════════════════════════════════════════════════ */}
       {/* ── Fixed Center-Bottom Explore Button (Hero Mode) ── */}
       {introPhase === "hero" && (
-        // On laptops the bag sits at ~20-48vw, so the pill is centred under the cat (66.5vw, the
+        // On laptops the bag sits at ~16.5-47.5vw, so the pill is centred under the cat (66.5vw, the
         // same centre as the cat artwork and the offer banner) on the empty white floor instead of
         // the screen centre, where it would cover the bag.
         <div className="absolute bottom-[max(0.4rem,env(safe-area-inset-bottom,0px))] sm:bottom-6 md:bottom-8 lg:bottom-3 inset-x-0 lg:right-auto lg:left-[66.5vw] lg:-translate-x-1/2 mx-auto w-fit z-50 flex items-center justify-center pointer-events-auto">
