@@ -851,11 +851,8 @@ export default function HeroScrollExperience() {
           />
         </Link>
 
-        {/* Right Actions: Laptop Header (Desktop/Tablet) or Scrolled Mobile Header.
-            On laptops (lg) the profile + cart icons drop just below the logo's bottom edge instead
-            of being centred on the tall logo. Logo height = its width (see the logo classes:
-            min(30vw, 50vw - 260px, 480px)) * 725/1776; + 12px nav padding + 16px gap. */}
-        <div className="flex items-center gap-3 sm:gap-4 shrink-0 lg:absolute lg:right-12 lg:top-[calc(min(30vw,50vw_-_260px,480px)*0.408_+_28px)]">
+        {/* Right Actions: Laptop Header (Desktop/Tablet) or Scrolled Mobile Header */}
+        <div className="flex items-center gap-2 sm:gap-1 shrink-0">
           {/* Profile Menu with Cat Symbol (Hidden on mobile during hero phase, visible on laptop or when scrolled) */}
           <div className="hidden md:flex">
             <ProfileMenu
