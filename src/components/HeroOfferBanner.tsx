@@ -37,7 +37,7 @@ export default function HeroOfferBanner({ onAction, className = "" }: HeroOfferB
       whileHover={{ scale: 1.03 }}
       whileTap={{ scale: 0.97 }}
       onClick={handleBannerClick}
-      className={`relative w-full max-w-none sm:max-w-[380px] md:max-w-[420px] lg:max-w-[455px] cursor-pointer pointer-events-auto select-none ${className}`}
+      className={`relative w-full max-w-none sm:max-w-[380px] md:max-w-[420px] lg:max-w-[840px] cursor-pointer pointer-events-auto select-none ${className}`}
     >
       {/* Vector banner: stays sharp at any screen size / pixel density. */}
       <svg

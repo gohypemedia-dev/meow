@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCart } from "@/context/CartContext";
 import { useCleanBean, formatPrice } from "@/lib/useCleanBean";
@@ -365,21 +364,6 @@ export default function CartDrawer() {
                         `Checkout • ${totalFormatted}`
                       )}
                     </button>
-
-                    {/* Policy Links */}
-                    <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-[11px] text-black/50 mt-3">
-                      <Link href="/terms-and-conditions" onClick={closeCart} className="hover:text-black/80 transition-colors">
-                        Terms of use
-                      </Link>
-                      <span>|</span>
-                      <Link href="/privacy-policy" onClick={closeCart} className="hover:text-black/80 transition-colors">
-                        Privacy policy
-                      </Link>
-                      <span>|</span>
-                      <Link href="/return-and-refund-policy" onClick={closeCart} className="hover:text-black/80 transition-colors">
-                        Refunds
-                      </Link>
-                    </div>
                   </div>
                 </div>
 

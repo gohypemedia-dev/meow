@@ -125,17 +125,26 @@ export default function HeroScrollExperience() {
     ? viewport.height / 2 - (viewport.width * 0.66 - mobileBagHeight / 2)
     : "26.5vh";
 
-  // Laptop hero position (>= 1024px): bag locked bottom-left on the floor, sized off viewport
-  // width like the background artwork so bag and cat keep the same layout on every laptop.
-  // Bag is 22vw wide, centred at 40vw (spans ~29vw-51vw) so it sits just left of the cat's
-  // "surprise" marks (~51.5vw) instead of leaving a wide empty gap. Bottom edge 3vh above the
-  // viewport bottom. Tablets (768-1023px) use different artwork and keep the old 28vw centre.
+  // Laptop hero position (>= 1024px): bag locked on the floor, sized off viewport width like the
+  // background artwork so bag and cat keep the same layout on every laptop.
+  // Bag is up to 24vw wide with its right edge at ~44.5vw, just left of the cat, so the bag + cat
+  // group (~20vw-81vw) is centred on the screen. On short screens the bag shrinks so its top
+  // always stays below the navbar logo. Bottom edge 3vh above the viewport bottom.
+  // Tablets (768-1023px) use different artwork and keep the old 22vw bag at a 28vw centre.
   const isLaptopView = viewport.width >= 1024;
+  const BAG_RATIO = 1448 / 1086;
+  const laptopLogoHeight = Math.min(viewport.width * 0.36, 540) * (725 / 1776);
+  const laptopNavBottom = laptopLogoHeight + 12 + 16; // logo + nav top padding + breathing room
+  const laptopBagWidth = isLaptopView
+    ? Math.min(viewport.width * 0.24, (viewport.height * 0.97 - laptopNavBottom) / BAG_RATIO)
+    : viewport.width * 0.22;
   const laptopBagBaseWidth = Math.min(viewport.width * 0.19, 280);
-  const laptopBagHeight = viewport.width * 0.22 * (1448 / 1086);
-  const laptopHeroX = viewport.width * ((isLaptopView ? 0.40 : 0.28) - 0.5);
+  const laptopBagHeight = laptopBagWidth * BAG_RATIO;
+  const laptopHeroX = isLaptopView
+    ? viewport.width * 0.445 - laptopBagWidth / 2 - viewport.width * 0.5
+    : viewport.width * (0.28 - 0.5);
   const laptopHeroY = viewport.height * 0.47 - laptopBagHeight / 2;
-  const laptopHeroScale = laptopBagBaseWidth ? (viewport.width * 0.22) / laptopBagBaseWidth : 0.92;
+  const laptopHeroScale = laptopBagBaseWidth ? laptopBagWidth / laptopBagBaseWidth : 0.92;
 
   // Responsive Carousel Card Dimensions (Taller mobile card height matching exact 974 x 1536 aspect ratio)
   const isTablet = viewport.width ? viewport.width >= 640 && viewport.width < 1024 : false;
@@ -148,9 +157,6 @@ export default function HeroScrollExperience() {
   const cardHeight = !isMobile ? 490 : isTablet ? 450 : Math.min(mobileTargetHeight, maxMobileCardHeight);
   // Banner top spacing offset on mobile so it starts cleanly below the fixed icons (~168px)
   const mobileBannerYOffset = isMobile ? (viewport.height ? Math.max(Math.round(175 + cardHeight / 2 - viewport.height / 2), 24) : 48) : 0;
-
-  // Scaled to fit cleanly INSIDE the dashed box with breathing room on top and bottom
-  const inBoxBagScale = isMobileView ? 0.78 : 0.80;
 
   // ── Continuous 160vh Virtual Scroll Engine (No body scroll, zero blank space) ──
   const scrollProgress = useMotionValue(0);
@@ -219,44 +225,40 @@ export default function HeroScrollExperience() {
   const heroBannerY = useTransform(smoothProgress, [0, 0.22], [0, -32]);
 
   // Continuous Bag Position, Scale, Rotate, Opacity Transforms
+  // 0 -> 0.40: bag rises from the hero floor to the centre while the background fades.
+  // 0.40 -> 1.0: one uninterrupted move - the bag tilts and grows straight into the product photo
+  // (no shrink-then-grow step in between).
+  const cosEase = (t: number) => 0.5 - 0.5 * Math.cos(Math.min(Math.max(t, 0), 1) * Math.PI);
+  const introEase = (p: number) => cosEase(p / 0.40);
+  const mergeEase = (p: number) => cosEase((p - 0.40) / 0.60);
+
   const bagX = useTransform(smoothProgress, (p) => {
-    if (p <= 0.40) {
-      const ease = 0.5 - 0.5 * Math.cos((p / 0.40) * Math.PI);
-      return heroStartX * (1 - ease);
-    }
-    if (p <= 0.70) return 0;
-    const ease = 0.5 - 0.5 * Math.cos(((p - 0.70) / 0.30) * Math.PI);
-    return dockedTargetX * ease;
+    if (p <= 0.40) return heroStartX * (1 - introEase(p));
+    return dockedTargetX * mergeEase(p);
   });
 
   const bagY = useTransform(smoothProgress, (p) => {
     if (p <= 0.40) {
-      const ease = 0.5 - 0.5 * Math.cos((p / 0.40) * Math.PI);
+      const ease = introEase(p);
       return heroStartY * (1 - ease) + boxCenterY * ease;
     }
-    if (p <= 0.70) return boxCenterY;
-    const ease = 0.5 - 0.5 * Math.cos(((p - 0.70) / 0.30) * Math.PI);
+    const ease = mergeEase(p);
     return boxCenterY * (1 - ease) + dockedTargetY * ease;
   });
 
   const bagScale = useTransform(smoothProgress, (p) => {
     const spotlightScale = isMobileView ? 1.05 : 1.15;
     if (p <= 0.40) {
-      const ease = 0.5 - 0.5 * Math.cos((p / 0.40) * Math.PI);
+      const ease = introEase(p);
       return heroStartScale * (1 - ease) + spotlightScale * ease;
     }
-    if (p <= 0.70) {
-      const ease = 0.5 - 0.5 * Math.cos(((p - 0.40) / 0.30) * Math.PI);
-      return spotlightScale * (1 - ease) + inBoxBagScale * ease;
-    }
-    const ease = 0.5 - 0.5 * Math.cos(((p - 0.70) / 0.30) * Math.PI);
-    return inBoxBagScale * (1 - ease) + dockedTargetScale * ease;
+    const ease = mergeEase(p);
+    return spotlightScale * (1 - ease) + dockedTargetScale * ease;
   });
 
   const bagRotate = useTransform(smoothProgress, (p) => {
-    if (p <= 0.70) return 0;
-    const ease = 0.5 - 0.5 * Math.cos(((p - 0.70) / 0.30) * Math.PI);
-    return 12.0 * ease;
+    if (p <= 0.40) return 0;
+    return 12.0 * mergeEase(p);
   });
 
   const floatingBagOpacity = useTransform(smoothProgress, (p) => {
@@ -267,8 +269,8 @@ export default function HeroScrollExperience() {
   // Filmstrip Banner behind bag
   const bannerFilmstripOpacity = useTransform(smoothProgress, (p) => {
     if (stage !== "carousel") return 0;
-    if (p <= 0.68) return 0;
-    if (p <= 0.86) return (p - 0.68) / 0.18;
+    if (p <= 0.42) return 0;
+    if (p <= 0.66) return (p - 0.42) / 0.24;
     return 1;
   });
 
@@ -280,8 +282,11 @@ export default function HeroScrollExperience() {
   });
 
   // Dynamic Clip Path for the bag as it enters the card boundary
+  // From the moment the merge starts (0.40) the bag is clipped to the card's edges, so it can never
+  // spill outside the photo card. At 0.40 the bag (spotlight scale) still fits inside the card,
+  // and the card fades in behind it (see bannerFilmstripOpacity) before the bag grows past its edges.
   const bagClipPath = useTransform(smoothProgress, (p) => {
-    if (p <= 0.70) return "none";
+    if (p <= 0.40) return "none";
     return `inset(calc(50% - ${cardHeight / 2}px + ${mobileBannerYOffset}px) calc(50% - ${cardWidth / 2}px) calc(50% - ${cardHeight / 2}px - ${mobileBannerYOffset}px) calc(50% - ${cardWidth / 2}px))`;
   });
 
@@ -839,7 +844,7 @@ export default function HeroScrollExperience() {
             alt="Meow Ganics Logo"
             width={1776}
             height={725}
-            className="w-[72vw] xs:w-[74vw] max-w-[315px] sm:max-w-none sm:w-[260px] md:w-[285px] lg:w-[420px] h-auto max-h-[114px] xs:max-h-[126px] sm:max-h-[84px] md:max-h-[92px] lg:max-h-[172px] object-contain object-left transition-transform duration-300 group-hover:scale-105 origin-left drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)]"
+            className="w-[72vw] xs:w-[74vw] max-w-[315px] sm:max-w-none sm:w-[260px] md:w-[285px] lg:w-[36vw] lg:max-w-[540px] h-auto max-h-[114px] xs:max-h-[126px] sm:max-h-[84px] md:max-h-[92px] lg:max-h-[221px] object-contain object-left transition-transform duration-300 group-hover:scale-105 origin-left drop-shadow-[0_2px_6px_rgba(0,0,0,0.10)]"
             priority
           />
         </Link>

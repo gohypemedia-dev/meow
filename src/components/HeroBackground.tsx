@@ -3,27 +3,6 @@
 import React from "react";
 import Image from "next/image";
 
-// The three little "surprise" strokes beside the cat's head live in their own image so they can
-// sway gently while the cat and hills stay perfectly still. Boxes are % of the artwork container.
-const MARKS_DESKTOP = { left: 53.409, top: 52.816, width: 3.947, height: 10.521 };
-
-function SurpriseMarks({ src, box }: { src: string; box: typeof MARKS_DESKTOP }) {
-  return (
-    <div
-      className="absolute pointer-events-none"
-      style={{ left: `${box.left}%`, top: `${box.top}%`, width: `${box.width}%`, height: `${box.height}%` }}
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={src}
-        alt=""
-        draggable={false}
-        className="animate-feather w-full h-full select-none"
-      />
-    </div>
-  );
-}
-
 // The cat's eyes, measured in each artwork's own pixel space. Each eye is redrawn on top of the
 // artwork (blue ellipse + black pupil) so the pupils can glance around.
 type Eye = { cx: number; cy: number; rx: number; ry: number; px: number; py: number; prx: number; pry: number };
@@ -134,26 +113,27 @@ export default function HeroBackground() {
       </div>
 
       {/* Laptop view (>= lg: 1024px): artwork scaled off viewport width so the cat stays locked
-          right of centre (~72vw) with its paws ~12vh above the bottom edge on every laptop.
+          at ~66vw (bag + cat centred as a group) with its paws ~12vh above the bottom edge on every laptop.
           Artwork is 1672x941 and the cat's paws sit at y=800 (141px above the image bottom). */}
       <div
         className="hidden lg:block absolute pointer-events-none z-10"
         style={{
-          width: "160vw",
+          // 145vw wide (was 160vw); left keeps the cat centred at ~66.5vw (cat centre is 66.875%
+          // across the artwork): 66.5 - 0.66875 * 145 = -30.5vw.
+          width: "145vw",
           aspectRatio: "1672 / 941",
-          left: "-34vw",
-          bottom: "calc(12vh - 160vw * 141 / 1672)",
+          left: "-30.5vw",
+          bottom: "calc(12vh - 145vw * 141 / 1672)",
         }}
       >
         <Image
           src="/hero-cat-hills-v2.png"
           alt="Meow Ganics Litter Hills & Peeking Cat"
           fill
-          sizes="160vw"
+          sizes="145vw"
           className="object-contain"
           priority
         />
-        <SurpriseMarks src="/hero-marks.png" box={MARKS_DESKTOP} />
         <CatEyes art={EYES_DESKTOP} id="cat-d" />
       </div>
 

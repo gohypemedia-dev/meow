@@ -202,16 +202,17 @@ button {
 
 
 /* Hero offer banner on laptop/desktop: sits on top of the peeking cat's head,
-   nestled between its ears. The cat art is 160vw wide, left -34vw, anchored 12vh from
-   the bottom. Measured from the artwork: ears at ~60vw and ~85vw, head top between
-   them ~(12vh + 16-19vw) above the viewport bottom. Banner is centred at 73vw,
-   16vw wide (spans ~65-81vw), with its bottom just above the head. */
+   nestled between its ears. The cat art is 145vw wide, left -30.5vw, anchored 12vh from
+   the bottom. Measured from the artwork: ears at ~55vw and ~78vw, head top between
+   them ~(12vh + 14.5-17vw) above the viewport bottom. Banner is centred on the cat at 66.5vw,
+   up to 36vw wide (~48.5-84.5vw, clear of the logo and the right-side icons), with its
+   bottom just above the head. Its height may use the space up to ~24px from the top. */
 @media (min-width: 1024px) {
   .hero-offer-slot {
-    left: 73vw;
+    left: 66.5vw;
     top: auto;
-    bottom: calc(14vh + 22.5vw);
-    width: min(19vw, 455px, calc((86vh - 22.5vw - 70px) * 1.474));
+    bottom: calc(14vh + 20.4vw);
+    width: min(36vw, 840px, calc((86vh - 20.4vw - 24px) * 1.474));
     padding-left: 0;
     padding-right: 0;
   }
